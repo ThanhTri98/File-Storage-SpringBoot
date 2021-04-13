@@ -1,5 +1,6 @@
 package com.api.filestorage.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -7,6 +8,7 @@ import javax.persistence.Table;
 @Table(name = "musicfile")
 public class MusicFile extends Files {
 	private int length;
+	@Column(name = "bit_rate")
 	private String bitRate;
 
 	public MusicFile() {

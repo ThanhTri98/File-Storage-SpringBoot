@@ -1,7 +1,6 @@
 package com.api.filestorage.entities;
 
-import java.sql.Date;
-
+import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -14,7 +13,8 @@ public abstract class Files {
 	private String extension;
 	private String parent;
 	private String creator;
-	private Date modifyDate;
+	@Column(name = "modify_date")
+	private String modifyDate;
 
 	public String getId() {
 		return this.id;
@@ -64,11 +64,11 @@ public abstract class Files {
 		this.creator = creator;
 	}
 
-	public Date getModifyDate() {
+	public String getModifyDate() {
 		return this.modifyDate;
 	}
 
-	public void setModifyDate(Date modifyDate) {
+	public void setModifyDate(String modifyDate) {
 		this.modifyDate = modifyDate;
 	}
 
