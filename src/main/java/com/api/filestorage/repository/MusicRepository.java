@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MusicRepository extends JpaRepository<MusicFile, String> {
 
-    @Query(value = "SELECT * FROM MUSICFILE MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT AND MF.EXTENSION IS NOT NULL", nativeQuery = true)
+    @Query(value = "SELECT * FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT AND MF.EXTENSION IS NOT NULL", nativeQuery = true)
     List<MusicFile> findByFile(@Param("CREATOR") String creator, @Param("PARENT") String parent);
-    @Query(value = "SELECT * FROM MUSICFILE MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT", nativeQuery = true)
+    @Query(value = "SELECT * FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT", nativeQuery = true)
     List<MusicFile> findAllFileInParent(@Param("CREATOR") String creator, @Param("PARENT") String parent);
 
 }
