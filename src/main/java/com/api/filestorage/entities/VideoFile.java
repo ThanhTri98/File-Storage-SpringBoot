@@ -1,5 +1,8 @@
 package com.api.filestorage.entities;
 
-public class VideoFile {
+public class VideoFile extends Files {
+
+    public VideoFile() {
+    }
 
 }

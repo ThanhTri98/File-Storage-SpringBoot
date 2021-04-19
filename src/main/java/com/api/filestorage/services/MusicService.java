@@ -17,4 +17,11 @@ public class MusicService {
 		return filesRepository.findAll();
 	}
 
+	public List<MusicFile> findByFile(String creator, String parent) {
+		return filesRepository.findByFile(creator, parent);
+	}
+	public List<MusicFile> findAllFileInParent(String creator, String parent) {
+		return filesRepository.findAllFileInParent(creator, parent);
+	}
+
 }
