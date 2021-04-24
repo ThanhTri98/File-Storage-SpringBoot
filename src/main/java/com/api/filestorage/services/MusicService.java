@@ -20,8 +20,24 @@ public class MusicService {
 	public List<MusicFile> findByFile(String creator, String parent) {
 		return filesRepository.findByFile(creator, parent);
 	}
+
 	public List<MusicFile> findAllFileInParent(String creator, String parent) {
 		return filesRepository.findAllFileInParent(creator, parent);
 	}
 
+	// public Integer isDupplicateName(String creator, String parent, String
+	// newName) {
+	// return;
+	// }
+
+	public boolean editFolderName(String creator, String parent, String newName, int id) {
+		if (filesRepository.isDupplicateName(creator, parent, newName) != null) {
+			// System.out.println(creator + "," + parent + "," + id);
+			return false;
+		}
+		// filesRepository.save(entity)
+		filesRepository.editNameFolder(id, newName);
+		// System.out.println("hihi");
+		return true;
+	}
 }
