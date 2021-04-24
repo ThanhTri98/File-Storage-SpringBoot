@@ -1,13 +1,17 @@
 package com.api.filestorage.entities;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class Files {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	private String file_sk;
 	private String name;
 	private long size;
 	private String extension;
@@ -16,12 +20,8 @@ public abstract class Files {
 	@Column(name = "modify_date")
 	private String modifyDate;
 
-	public String getId() {
+	public int getId() {
 		return this.id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -70,6 +70,18 @@ public abstract class Files {
 
 	public void setModifyDate(String modifyDate) {
 		this.modifyDate = modifyDate;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getFile_sk() {
+		return this.file_sk;
+	}
+
+	public void setFile_sk(String file_sk) {
+		this.file_sk = file_sk;
 	}
 
 }
