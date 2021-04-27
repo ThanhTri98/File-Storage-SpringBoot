@@ -24,15 +24,15 @@ public class MusicService {
 	}
 
 	public List<MusicFile> findAllFileInParent(String creator, String parent) {
-		if (parent != null)
-			return filesRepository.findAllFileInParent(creator, parent);
-		return filesRepository.findAllFileInParent(creator);
+		if (parent == null)
+			parent = "";
+		return filesRepository.findAllFileInParent(creator, parent);
 	}
 
 	public boolean isDupplicateName(String creator, String parent, String newName) {
-		if (parent != null)
-			return filesRepository.isDupplicateName(creator, parent, newName) != null;
-		return filesRepository.isDupplicateName(creator, newName) != null;
+		if (parent == null)
+			parent = "";
+		return filesRepository.isDupplicateName(creator, parent, newName) != null;
 	}
 
 	public void editFilesName(String newName, String oldName, int id, String extension) {

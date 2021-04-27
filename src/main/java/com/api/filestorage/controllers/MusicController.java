@@ -23,18 +23,7 @@ public class MusicController {
 	@Autowired
 	private MusicService musicService;
 
-	// @GetMapping
-	// public List<MusicFile> getAllFiles() {
-	// return musicService.getAllFiles();
-	// }
-
-	// @GetMapping("/file/{creator}/{parent}")
-	// public List<MusicFile> findByFile(@PathVariable("creator") String creator,
-	// @PathVariable("parent") String parent) {
-	// return musicService.findByFile(creator, parent);
-	// }
-
-	@GetMapping(value = { "/{creator}", "/{creator}/{parent}" })
+	@GetMapping(value = { "/{creator}", "/{creator/}", "/{creator}/{parent}" })
 	public List<MusicFile> findAllFileInParent(@PathVariable("creator") String creator,
 			@PathVariable(required = false) String parent) {
 		return musicService.findAllFileInParent(creator, parent);
@@ -42,8 +31,8 @@ public class MusicController {
 
 	// Edit folder name
 	@PutMapping("/edit")
-	public ResponseEntity<?> editFolderName(@RequestBody Map<String, String> fileModel) {
-		if (!musicService.isDupplicateName(fileModel.get("creator"), fileModel.get("parent"),
+	public ResponseEntity<?> editFilesName(@RequestBody Map<String, String> fileModel) {
+		if (!musicService.isDupplicateName(fileModel.get("creator"), fileModel.get("old_name"),
 				fileModel.get("new_name"))) {
 			musicService.editFilesName(fileModel.get("new_name"), fileModel.get("old_name"),
 					Integer.parseInt(fileModel.get("id")), fileModel.get("extension"));

@@ -20,28 +20,21 @@ public interface MusicRepository extends JpaRepository<MusicFile, Integer> {
     @Query(value = "SELECT * FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT", nativeQuery = true)
     List<MusicFile> findAllFileInParent(@Param("CREATOR") String creator, @Param("PARENT") String parent);
 
-    @Query(value = "SELECT * FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT IS NULL", nativeQuery = true)
-    List<MusicFile> findAllFileInParent(@Param("CREATOR") String creator);
-
-    // check file name
+    // check files name
     @Query(value = "SELECT 1 FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT AND MF.NAME = :NEWNAME", nativeQuery = true)
     Integer isDupplicateName(@Param("CREATOR") String creator, @Param("PARENT") String parent,
             @Param("NEWNAME") String newName);
 
-    // check folder name
-    @Query(value = "SELECT 1 FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT IS NULL AND MF.NAME = :NEWNAME", nativeQuery = true)
-    Integer isDupplicateName(@Param("CREATOR") String creator, @Param("NEWNAME") String newName);
-
     // update file name
     @Modifying
     @Transactional
-    @Query(value = "UPDATE musicfile MF SET MF.NAME = :NEWNAME WHERE MF.ID = :ID", nativeQuery = true)
+    @Query(value = "UPDATE musicfile MF SET MF.NAME = :NEWNAME, MF.MODIFY_DATE=NOW() WHERE MF.ID = :ID", nativeQuery = true)
     void editFilesName(@Param("ID") int id, @Param("NEWNAME") String newName);
 
     // update folder name
     @Modifying
     @Transactional
-    @Query(value = "UPDATE musicfile MF SET MF.PARENT = :N_PARENT WHERE MF.PARENT = :O_PARENT", nativeQuery = true)
+    @Query(value = "UPDATE musicfile MF SET MF.PARENT = :N_PARENT, MF.MODIFY_DATE=NOW() WHERE MF.PARENT = :O_PARENT", nativeQuery = true)
     void editFilesName(@Param("O_PARENT") String oldParent, @Param("N_PARENT") String newParent);
 
 }
