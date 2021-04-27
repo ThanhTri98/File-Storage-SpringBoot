@@ -1,6 +1,7 @@
 package com.api.filestorage.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import com.api.filestorage.entities.MusicFile;
 import com.api.filestorage.services.MusicService;
@@ -22,27 +23,30 @@ public class MusicController {
 	@Autowired
 	private MusicService musicService;
 
-	@GetMapping
-	public List<MusicFile> getAllFiles() {
-		return musicService.getAllFiles();
-	}
+	// @GetMapping
+	// public List<MusicFile> getAllFiles() {
+	// return musicService.getAllFiles();
+	// }
 
-	@GetMapping("/file/{creator}/{parent}")
-	public List<MusicFile> findByFile(@PathVariable("creator") String creator, @PathVariable("parent") String parent) {
-		return musicService.findByFile(creator, parent);
-	}
+	// @GetMapping("/file/{creator}/{parent}")
+	// public List<MusicFile> findByFile(@PathVariable("creator") String creator,
+	// @PathVariable("parent") String parent) {
+	// return musicService.findByFile(creator, parent);
+	// }
 
-	@GetMapping(value = { "/files/{creator}", "/files/{creator}/{parent}" })
+	@GetMapping(value = { "/{creator}", "/{creator}/{parent}" })
 	public List<MusicFile> findAllFileInParent(@PathVariable("creator") String creator,
 			@PathVariable(required = false) String parent) {
 		return musicService.findAllFileInParent(creator, parent);
 	}
 
 	// Edit folder name
-	@PutMapping("/files/editname")
-	public ResponseEntity<?> editFolderName(@RequestBody MusicFile musicFile) {
-		if (!musicService.isDupplicateName(musicFile.getCreator(), musicFile.getParent(), musicFile.getName())) {
-			musicService.editFolderName(musicFile.getName(), musicFile.getId());
+	@PutMapping("/edit")
+	public ResponseEntity<?> editFolderName(@RequestBody Map<String, String> fileModel) {
+		if (!musicService.isDupplicateName(fileModel.get("creator"), fileModel.get("parent"),
+				fileModel.get("new_name"))) {
+			musicService.editFilesName(fileModel.get("new_name"), fileModel.get("old_name"),
+					Integer.parseInt(fileModel.get("id")), fileModel.get("extension"));
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -50,7 +54,7 @@ public class MusicController {
 	}
 
 	// Create new folder
-	@PostMapping("/files")
+	@PostMapping()
 	public ResponseEntity<?> createNewFolder(@RequestBody MusicFile folder) {
 		if (!musicService.isDupplicateName(folder.getCreator(), folder.getParent(), folder.getName())) {
 			musicService.createNewFolder(folder);

@@ -30,11 +30,15 @@ public class MusicService {
 	}
 
 	public boolean isDupplicateName(String creator, String parent, String newName) {
-		return filesRepository.isDupplicateName(creator, parent, newName) != null;
+		if (parent != null)
+			return filesRepository.isDupplicateName(creator, parent, newName) != null;
+		return filesRepository.isDupplicateName(creator, newName) != null;
 	}
 
-	public void editFolderName(String newName, int id) {
-		filesRepository.editNameFolder(id, newName);
+	public void editFilesName(String newName, String oldName, int id, String extension) {
+		filesRepository.editFilesName(id, newName);
+		if (extension == null) // folder
+			filesRepository.editFilesName(oldName, newName);
 	}
 
 	public void createNewFolder(MusicFile folder) {
