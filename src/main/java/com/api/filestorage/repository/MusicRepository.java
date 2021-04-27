@@ -19,6 +19,8 @@ public interface MusicRepository extends JpaRepository<MusicFile, Integer> {
 
     @Query(value = "SELECT * FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT", nativeQuery = true)
     List<MusicFile> findAllFileInParent(@Param("CREATOR") String creator, @Param("PARENT") String parent);
+    @Query(value = "SELECT * FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT IS NULL", nativeQuery = true)
+    List<MusicFile> findAllFileInParent(@Param("CREATOR") String creator);
 
     @Query(value = "SELECT 1 FROM musicfile MF WHERE MF.CREATOR = :CREATOR AND MF.PARENT = :PARENT AND MF.NAME = :NEWNAME", nativeQuery = true)
     Integer isDupplicateName(@Param("CREATOR") String creator, @Param("PARENT") String parent,

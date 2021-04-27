@@ -1,6 +1,8 @@
 package com.api.filestorage.services;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import com.api.filestorage.entities.MusicFile;
 import com.api.filestorage.repository.MusicRepository;
@@ -22,22 +24,22 @@ public class MusicService {
 	}
 
 	public List<MusicFile> findAllFileInParent(String creator, String parent) {
-		return filesRepository.findAllFileInParent(creator, parent);
+		if (parent != null)
+			return filesRepository.findAllFileInParent(creator, parent);
+		return filesRepository.findAllFileInParent(creator);
 	}
 
-	// public Integer isDupplicateName(String creator, String parent, String
-	// newName) {
-	// return;
-	// }
+	public boolean isDupplicateName(String creator, String parent, String newName) {
+		return filesRepository.isDupplicateName(creator, parent, newName) != null;
+	}
 
-	public boolean editFolderName(String creator, String parent, String newName, int id) {
-		if (filesRepository.isDupplicateName(creator, parent, newName) != null) {
-			// System.out.println(creator + "," + parent + "," + id);
-			return false;
-		}
-		// filesRepository.save(entity)
+	public void editFolderName(String newName, int id) {
 		filesRepository.editNameFolder(id, newName);
-		// System.out.println("hihi");
-		return true;
+	}
+
+	public void createNewFolder(MusicFile folder) {
+		folder.setFile_sk(UUID.randomUUID().toString());
+		folder.setModifyDate(LocalDate.now());
+		filesRepository.save(folder);
 	}
 }

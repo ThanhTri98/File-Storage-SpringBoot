@@ -1,5 +1,7 @@
 package com.api.filestorage.entities;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,7 +20,8 @@ public abstract class Files {
 	private String parent;
 	private String creator;
 	@Column(name = "modify_date")
-	private String modifyDate;
+	private LocalDate modifyDate;
+	private int state;
 
 	public int getId() {
 		return this.id;
@@ -64,11 +67,11 @@ public abstract class Files {
 		this.creator = creator;
 	}
 
-	public String getModifyDate() {
+	public LocalDate getModifyDate() {
 		return this.modifyDate;
 	}
 
-	public void setModifyDate(String modifyDate) {
+	public void setModifyDate(LocalDate modifyDate) {
 		this.modifyDate = modifyDate;
 	}
 
@@ -82,6 +85,14 @@ public abstract class Files {
 
 	public void setFile_sk(String file_sk) {
 		this.file_sk = file_sk;
+	}
+
+	public int getState() {
+		return this.state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
 	}
 
 }
