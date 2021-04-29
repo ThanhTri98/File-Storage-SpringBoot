@@ -13,37 +13,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class MusicService {
 	@Autowired
-	private MusicRepository filesRepository;
-
-	public List<MusicFile> getAllFiles() {
-		return filesRepository.findAll();
-	}
-
-	public List<MusicFile> findByFile(String creator, String parent) {
-		return filesRepository.findByFile(creator, parent);
-	}
+	private MusicRepository musicRepository;
 
 	public List<MusicFile> findAllFileInParent(String creator, String parent) {
 		if (parent == null)
 			parent = "";
-		return filesRepository.findAllFileInParent(creator, parent);
+		return musicRepository.findByCreatorAndParent(creator, parent);
 	}
 
-	public boolean isDupplicateName(String creator, String parent, String newName) {
-		if (parent == null)
-			parent = "";
-		return filesRepository.isDupplicateName(creator, parent, newName) != null;
+	public boolean isDupplicateName(String... params) {
+		// File: Signature is file name + extendsion
+		return params[3] == null
+				? musicRepository.findByExtensionIsNullAndCreatorAndParentAndName(params[0], params[1],
+						params[2]) != null
+				: musicRepository.findByCreatorAndParentAndExtensionAndName(params[0], params[1], params[3],
+						params[2]) != null;
 	}
 
 	public void editFilesName(String newName, String oldName, int id, String extension) {
-		filesRepository.editFilesName(id, newName);
+		musicRepository.editFilesName(id, newName);
 		if (extension == null) // folder
-			filesRepository.editFilesName(oldName, newName);
+			musicRepository.editFilesName(oldName, newName);
 	}
 
 	public void createNewFolder(MusicFile folder) {
 		folder.setFile_sk(UUID.randomUUID().toString());
 		folder.setModifyDate(LocalDate.now());
-		filesRepository.save(folder);
+		musicRepository.save(folder);
 	}
 }

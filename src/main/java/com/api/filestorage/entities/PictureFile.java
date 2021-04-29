@@ -1,11 +1,9 @@
 package com.api.filestorage.entities;
 
-public class PictureFile {
+public class PictureFile extends Files {
+
 	private int width;
 	private int height;
-
-	public PictureFile() {
-	}
 
 	public int getWidth() {
 		return this.width;
@@ -22,6 +20,5 @@ public class PictureFile {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-
 
 }

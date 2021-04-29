@@ -26,14 +26,15 @@ public class MusicController {
 	@GetMapping(value = { "/{creator}", "/{creator/}", "/{creator}/{parent}" })
 	public List<MusicFile> findAllFileInParent(@PathVariable("creator") String creator,
 			@PathVariable(required = false) String parent) {
+		System.out.println(parent);
 		return musicService.findAllFileInParent(creator, parent);
 	}
 
 	// Edit folder name
 	@PutMapping("/edit")
 	public ResponseEntity<?> editFilesName(@RequestBody Map<String, String> fileModel) {
-		if (!musicService.isDupplicateName(fileModel.get("creator"), fileModel.get("old_name"),
-				fileModel.get("new_name"))) {
+		if (!musicService.isDupplicateName(fileModel.get("creator"), fileModel.get("cur_parent"),
+				fileModel.get("new_name"), fileModel.get("extension"), fileModel.get("old_name"))) {
 			musicService.editFilesName(fileModel.get("new_name"), fileModel.get("old_name"),
 					Integer.parseInt(fileModel.get("id")), fileModel.get("extension"));
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -45,7 +46,8 @@ public class MusicController {
 	// Create new folder
 	@PostMapping()
 	public ResponseEntity<?> createNewFolder(@RequestBody MusicFile folder) {
-		if (!musicService.isDupplicateName(folder.getCreator(), folder.getParent(), folder.getName())) {
+		if (!musicService.isDupplicateName(folder.getCreator(), folder.getParent(), folder.getName(),
+				folder.getExtension())) {
 			musicService.createNewFolder(folder);
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
