@@ -11,28 +11,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MusicService {
+public class MusicService implements BaseService<MusicFile> {
 	@Autowired
 	private MusicRepository musicRepository;
 
+	@Override
 	public List<MusicFile> findAllFileInParent(String creator, String parent) {
 		if (parent == null)
 			parent = "";
-		return musicRepository.findByCreatorAndParent(creator, parent);
+		return musicRepository.findByStateAndCreatorAndParent(DEFAULT_STATE, creator, parent);
 	}
 
-	public boolean isDupplicateName(String... params) {
+	@Override
+	public boolean isDupplicateName(String creator, String parent, String name, String extensions) {
 		// File: Signature is file name + extendsion
-		return params[3] == null
-				? musicRepository.findByExtensionIsNullAndCreatorAndParentAndName(params[0], params[1],
-						params[2]) != null
-				: musicRepository.findByCreatorAndParentAndExtensionAndName(params[0], params[1], params[3],
-						params[2]) != null;
+		return musicRepository.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator, parent,
+				extensions, name) != null;
 	}
 
+	@Override
 	public void editFilesName(String newName, String oldName, int id, String extension) {
 		musicRepository.editFilesName(id, newName);
-		if (extension == null) // folder
+		if (extension.equals(FOLDER_EXT)) // folder
 			musicRepository.editFilesName(oldName, newName);
 	}
 

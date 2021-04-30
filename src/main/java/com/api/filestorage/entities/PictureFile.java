@@ -1,5 +1,10 @@
 package com.api.filestorage.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "picturefile")
 public class PictureFile extends Files {
 
 	private int width;
