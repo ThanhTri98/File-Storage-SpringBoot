@@ -1,9 +1,9 @@
 package com.api.filestorage.services;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
+import com.api.filestorage.entities.Files;
 import com.api.filestorage.entities.PictureFile;
 import com.api.filestorage.repository.PictureRepository;
 
@@ -16,31 +16,29 @@ public class PictureService implements BaseService<PictureFile> {
     private PictureRepository pictureRepository;
 
     @Override
-    public List<PictureFile> findAllFileInParent(String creator, String parent) {
-        if (parent == null)
-            parent = "";
-        return pictureRepository.findByStateAndCreatorAndParent(DEFAULT_STATE, creator, parent);
+    public List<? extends Files> findAllFileInParent(String creator, String parent) {
+        return BaseService.super.findAllFileInParent(creator, parent, pictureRepository);
     }
 
     @Override
-    public boolean isDupplicateName(String creator, String parent, String name, String extensions) {
-        // File: Signature is file name + extendsion
-        return pictureRepository.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator, parent,
-                extensions, name) != null;
+    public boolean editFilesName(Map<String, String> filesModel) {
+        return BaseService.super.editFilesName(filesModel, pictureRepository);
     }
 
     @Override
-    public void editFilesName(String newName, String oldName, int id, String extension) {
-        pictureRepository.editFilesName(id, newName);
-        if (extension.equals(FOLDER_EXT)) // folder
-            pictureRepository.editFilesName(oldName, newName);
+    public boolean createFolder(Files files) {
+        return BaseService.super.createFolder(files, pictureRepository);
     }
 
     @Override
-    public void createNewFolder(PictureFile folder) {
-        folder.setFile_sk(UUID.randomUUID().toString());
-        folder.setModifyDate(LocalDate.now());
-        pictureRepository.save(folder);
+    public void editFilesState(Map<String, String> filesModel) {
+        BaseService.super.editFilesState(filesModel, pictureRepository);
+
+    }
+
+    @Override
+    public int editFilesParent(List<Map<String, String>> filesModels) {
+        return BaseService.super.editFilesParent(filesModels, pictureRepository);
     }
 
 }
