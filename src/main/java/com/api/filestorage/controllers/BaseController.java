@@ -1,11 +1,11 @@
 package com.api.filestorage.controllers;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.api.filestorage.entities.Files;
+import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.services.BaseService;
 
 import org.springframework.http.HttpStatus;
@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-public interface BaseController<T extends Files> {
+public interface BaseController<T extends FilesEntity> {
 
     @GetMapping(value = { "/{creator}", "/{creator/}", "/{creator}/{parent}" })
-    List<? extends Files> findAllFileInParent(@PathVariable("creator") String creator,
+    List<? extends FilesEntity> findAllFileInParent(@PathVariable("creator") String creator,
             @PathVariable(required = false) String parent);
 
-    default List<? extends Files> findAllFileInParent(String creator, String parent, @NonNull BaseService<T> services) {
+    default List<? extends FilesEntity> findAllFileInParent(String creator, String parent, @NonNull BaseService<T> services) {
         return services.findAllFileInParent(creator, parent);
     }
 
@@ -54,23 +54,25 @@ public interface BaseController<T extends Files> {
     }
 
     @PutMapping("/move") // id, [name, extension], new_parent, creator ->>>> move
-    ResponseEntity<?> editFilesParent(@RequestBody List<Map<String, String>> filesModels);
+    ResponseEntity<?> editFilesParent(@RequestBody FileMoveDTO filesModel);
 
-    default ResponseEntity<?> editFilesParent(List<Map<String, String>> filesModels, @NonNull BaseService<T> services) {
-        // int fileCopied = services.editFilesParent(filesModels);
-        int fileCopied = -1;
-        if (fileCopied != filesModels.size()) {
-            Map<String, Object> resData = new HashMap<>();
-            resData.put("msg", "Thư mục đích có " + (filesModels.size() - fileCopied) + " mục trùng tên");
-            resData.put("key", Arrays.asList("1", "2", "2"));
-            return new ResponseEntity<Map<String, Object>>(resData, HttpStatus.INTERNAL_SERVER_ERROR);
+    default ResponseEntity<?> editFilesParent(FileMoveDTO filesModel, @NonNull BaseService<T> services) {
+        if (!filesModel.getIs_replace()) {
+            List<FileMoveDTO.Data> dataDuplicate = services.editFilesParent(filesModel);
+            // dataDuplicate.forEach(d -> System.out.printf("%s, %s", d.getExtension(),
+            // d.getName()));
+            if (dataDuplicate.size() != 0) {
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("msg", "Thư mục đích có " + dataDuplicate.size() + " mục trùng tên");
+                filesModel.setDatas(dataDuplicate);
+                responseData.put("data", filesModel);
+                return new ResponseEntity<Map<String, Object>>(responseData, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else { // Replace: Thay đổi file bị trùng bằng file trùng đồng thời xóa file bị trùng
+            services.editFilesParent(filesModel);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
 
-        filesModels.forEach(map -> {
-            map.toString();
-            map.values().forEach(v -> System.out.println(v));
-        });
-        return new ResponseEntity<String>("Sao chép thành công " + filesModels.size() + " FILES", HttpStatus.OK);
     }
     // share, copy, download, upload, sort, paging, search, filter
 

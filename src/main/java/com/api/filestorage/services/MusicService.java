@@ -3,15 +3,16 @@ package com.api.filestorage.services;
 import java.util.List;
 import java.util.Map;
 
-import com.api.filestorage.entities.Files;
-import com.api.filestorage.entities.MusicFile;
+import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.entities.FilesEntity;
+import com.api.filestorage.entities.MusicFileEntity;
 import com.api.filestorage.repository.MusicRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MusicService implements BaseService<MusicFile> {
+public class MusicService implements BaseService<MusicFileEntity> {
 	@Autowired
 	private MusicRepository musicRepository;
 
@@ -35,12 +36,12 @@ public class MusicService implements BaseService<MusicFile> {
 	// }
 
 	@Override
-	public List<? extends Files> findAllFileInParent(String creator, String parent) {
+	public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
 		return BaseService.super.findAllFileInParent(creator, parent, musicRepository);
 	}
 
 	@Override
-	public boolean createFolder(Files files) {
+	public boolean createFolder(FilesEntity files) {
 		return BaseService.super.createFolder(files, musicRepository);
 	}
 
@@ -50,8 +51,8 @@ public class MusicService implements BaseService<MusicFile> {
 	}
 
 	@Override
-	public int editFilesParent(List<Map<String, String>> filesModels) {
-		return BaseService.super.editFilesParent(filesModels, musicRepository);
+	public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {
+		return BaseService.super.editFilesParent(filesModel, musicRepository);
 	}
 
 }

@@ -1,7 +1,7 @@
 package com.api.filestorage.repository;
 
-import com.api.filestorage.entities.Files;
-import com.api.filestorage.entities.MusicFile;
+import com.api.filestorage.entities.FilesEntity;
+import com.api.filestorage.entities.MusicFileEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface MusicRepository extends JpaRepository<MusicFile, Integer>, BaseRepository<MusicFile> {
+public interface MusicRepository extends JpaRepository<MusicFileEntity, Integer>, BaseRepository<MusicFileEntity> {
     // update file name
     @Modifying
     @Query(value = "UPDATE musicfile MF SET MF.NAME = :NEWNAME, MF.MODIFY_DATE=NOW() WHERE MF.ID = :ID", nativeQuery = true)
@@ -25,8 +25,8 @@ public interface MusicRepository extends JpaRepository<MusicFile, Integer>, Base
     void editFilesName(@Param("O_PARENT") String oldParent, @Param("N_PARENT") String newParent);
 
     @Modifying
-    default void insert(@NonNull Files files) {
-        this.save((MusicFile) files);
+    default void insert(@NonNull FilesEntity files) {
+        this.save((MusicFileEntity) files);
     }
 
     // 20210502
@@ -42,4 +42,9 @@ public interface MusicRepository extends JpaRepository<MusicFile, Integer>, Base
     @Modifying
     @Query(value = "UPDATE musicfile MF SET MF.PARENT = ?2 WHERE MF.ID =?1", nativeQuery = true)
     void editFilesParent(int id, String parent);
+
+    @Modifying
+    default void delete(@NonNull FilesEntity files) {
+        this.deleteById(files.getId());
+    }
 }

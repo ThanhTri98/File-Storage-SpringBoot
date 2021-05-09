@@ -3,20 +3,21 @@ package com.api.filestorage.services;
 import java.util.List;
 import java.util.Map;
 
-import com.api.filestorage.entities.Files;
-import com.api.filestorage.entities.PictureFile;
+import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.entities.FilesEntity;
+import com.api.filestorage.entities.PictureFileEntity;
 import com.api.filestorage.repository.PictureRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PictureService implements BaseService<PictureFile> {
+public class PictureService implements BaseService<PictureFileEntity> {
     @Autowired
     private PictureRepository pictureRepository;
 
     @Override
-    public List<? extends Files> findAllFileInParent(String creator, String parent) {
+    public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
         return BaseService.super.findAllFileInParent(creator, parent, pictureRepository);
     }
 
@@ -26,7 +27,7 @@ public class PictureService implements BaseService<PictureFile> {
     }
 
     @Override
-    public boolean createFolder(Files files) {
+    public boolean createFolder(FilesEntity files) {
         return BaseService.super.createFolder(files, pictureRepository);
     }
 
@@ -37,8 +38,8 @@ public class PictureService implements BaseService<PictureFile> {
     }
 
     @Override
-    public int editFilesParent(List<Map<String, String>> filesModels) {
-        return BaseService.super.editFilesParent(filesModels, pictureRepository);
+    public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {
+        return BaseService.super.editFilesParent(filesModel, pictureRepository);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.api.filestorage.entities;
 
-public class VideoFile extends Files {
+public class VideoFileEntity extends FilesEntity {
     private int length;
 
     public int getLength() {
@@ -9,9 +9,6 @@ public class VideoFile extends Files {
 
     public void setLength(int length) {
         this.length = length;
-    }
-
-    public VideoFile() {
     }
 
 }

@@ -1,12 +1,6 @@
-package com.api.filestorage.entities;
+package com.api.filestorage.dto;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "picturefile")
-public class PictureFile extends Files {
-
+public class PictureFileDTO extends FilesDTO {
 	private int width;
 	private int height;
 

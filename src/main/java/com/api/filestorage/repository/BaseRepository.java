@@ -2,13 +2,13 @@ package com.api.filestorage.repository;
 
 import java.util.List;
 
-import com.api.filestorage.entities.Files;
+import com.api.filestorage.entities.FilesEntity;
 
 import org.springframework.lang.NonNull;
 
 public interface BaseRepository<T> {
     // Find all find in folder
-    List<? extends Files> findByStateAndCreatorAndParent(int state, String creator, String parent);
+    List<? extends FilesEntity> findByStateAndCreatorAndParent(int state, String creator, String parent);
 
     // Check file name is dupplicate in DB
     T findByStateAndCreatorAndParentAndExtensionAndName(int state, String creator, String parent, String extension,
@@ -30,5 +30,7 @@ public interface BaseRepository<T> {
     void editFilesParent(int id, String parent); // tmp - files
 
     // ---------------->MOVE
-    void insert(@NonNull Files files); // tmp
+    void insert(@NonNull FilesEntity files); // tmp
+
+    void delete(@NonNull FilesEntity files); // tmp
 }

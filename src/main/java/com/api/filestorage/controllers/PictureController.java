@@ -3,8 +3,9 @@ package com.api.filestorage.controllers;
 import java.util.List;
 import java.util.Map;
 
-import com.api.filestorage.entities.Files;
-import com.api.filestorage.entities.PictureFile;
+import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.entities.FilesEntity;
+import com.api.filestorage.entities.PictureFileEntity;
 import com.api.filestorage.services.PictureService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/pictures")
-public class PictureController implements BaseController<PictureFile> {
+@RequestMapping("/api/user/pictures")
+public class PictureController implements BaseController<PictureFileEntity> {
 	@Autowired
 	private PictureService pictureService;
 
 	@Override
-	public List<? extends Files> findAllFileInParent(String creator, String parent) {
+	public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
 		return BaseController.super.findAllFileInParent(creator, parent, pictureService);
 	}
 
@@ -29,7 +30,7 @@ public class PictureController implements BaseController<PictureFile> {
 	}
 
 	@Override
-	public ResponseEntity<?> createFolder(PictureFile folder) {
+	public ResponseEntity<?> createFolder(PictureFileEntity folder) {
 		return BaseController.super.createFolder(folder, pictureService);
 	}
 
@@ -39,7 +40,7 @@ public class PictureController implements BaseController<PictureFile> {
 	}
 
 	@Override
-	public ResponseEntity<?> editFilesParent(List<Map<String, String>> filesModels) {
+	public ResponseEntity<?> editFilesParent(FileMoveDTO filesModels) {
 		return BaseController.super.editFilesParent(filesModels, pictureService);
 	}
 }

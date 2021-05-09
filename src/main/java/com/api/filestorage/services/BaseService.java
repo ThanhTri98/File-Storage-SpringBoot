@@ -1,20 +1,22 @@
 package com.api.filestorage.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.api.filestorage.entities.Files;
+import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.repository.BaseRepository;
 
-public interface BaseService<T extends Files> {
+public interface BaseService<T extends FilesEntity> {
     static final int DEFAULT_STATE = 1;
     static final String FOLDER_EXT = "FOLDER";
 
-    List<? extends Files> findAllFileInParent(String creator, String parent);
+    List<? extends FilesEntity> findAllFileInParent(String creator, String parent);
 
-    default List<? extends Files> findAllFileInParent(String creator, String parent, BaseRepository<T> repos) {
+    default List<? extends FilesEntity> findAllFileInParent(String creator, String parent, BaseRepository<T> repos) {
         if (parent == null)
             parent = "";
         return repos.findByStateAndCreatorAndParent(DEFAULT_STATE, creator, parent);
@@ -51,9 +53,9 @@ public interface BaseService<T extends Files> {
 
     }
 
-    boolean createFolder(Files files);
+    boolean createFolder(FilesEntity files);
 
-    default boolean createFolder(Files files, BaseRepository<T> repos) {
+    default boolean createFolder(FilesEntity files, BaseRepository<T> repos) {
         // Check name is duplicate
         if (repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, files.getCreator(),
                 files.getParent(), files.getExtension(), files.getName()) != null)
@@ -65,9 +67,33 @@ public interface BaseService<T extends Files> {
         return true;
     }
 
-    int editFilesParent(List<Map<String, String>> filesModels);
+    List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel);
 
-    default int editFilesParent(List<Map<String, String>> filesModels, BaseRepository<T> repos) {
-        return 0;
+    default List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel, BaseRepository<T> repos) {
+        List<FileMoveDTO.Data> dataDuplicate = new ArrayList<>();
+        String creator = filesModel.getCreator();
+        String new_parent = filesModel.getNew_parent();
+        if (!filesModel.getIs_replace()) {
+            filesModel.getDatas().forEach(data -> {
+                if (repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator, new_parent,
+                        data.getExtension(), data.getName()) != null) // Duplicate
+                    dataDuplicate.add(data);
+                else
+                    repos.editFilesParent(data.getId(), new_parent);
+
+            });
+        } else { // Replace: Thay đổi file bị trùng bằng file trùng đồng thời xóa file bị trùng
+            filesModel.getDatas().forEach(data -> {
+                // Nếu là thư mục
+                // ++ Vào độ sâu 1 tiếp tục kiểm tra các file và thư mục con
+
+                // Nếu là file
+                FilesEntity f = repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator, new_parent,
+                        data.getExtension(), data.getName());
+                repos.editFilesParent(data.getId(), new_parent); // Thay đổi file bị trùng bằng file trùng
+                repos.delete(f); // xóa file bị trùng
+            });
+        }
+        return dataDuplicate;
     }
 }

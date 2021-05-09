@@ -6,15 +6,15 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "musicfile")
-public class MusicFile extends Files {
+public class MusicFileEntity extends FilesEntity {
 	private int length;
 	@Column(name = "bit_rate")
 	private String bitRate;
 
-	public MusicFile() {
+	public MusicFileEntity() {
 	}
 
-	public MusicFile(int length, String bitRate) {
+	public MusicFileEntity(int length, String bitRate) {
 		this.length = length;
 		this.bitRate = bitRate;
 	}

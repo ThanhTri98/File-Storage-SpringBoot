@@ -3,8 +3,9 @@ package com.api.filestorage.controllers;
 import java.util.List;
 import java.util.Map;
 
-import com.api.filestorage.entities.Files;
-import com.api.filestorage.entities.MusicFile;
+import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.entities.FilesEntity;
+import com.api.filestorage.entities.MusicFileEntity;
 import com.api.filestorage.services.MusicService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/musics")
-public class MusicController implements BaseController<MusicFile> {
+@RequestMapping("/api/user/musics")
+public class MusicController implements BaseController<MusicFileEntity> {
 	@Autowired
 	private MusicService musicService;
 
@@ -30,7 +31,7 @@ public class MusicController implements BaseController<MusicFile> {
 	 * BaseController.super.findAllFileInParent(creator, parent, services); }
 	 */
 	@Override
-	public List<? extends Files> findAllFileInParent(String creator, String parent) {
+	public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
 		return BaseController.super.findAllFileInParent(creator, parent, musicService);
 	}
 
@@ -50,7 +51,7 @@ public class MusicController implements BaseController<MusicFile> {
 
 	// Create new folder
 	@Override
-	public ResponseEntity<?> createFolder(MusicFile folder) {
+	public ResponseEntity<?> createFolder(MusicFileEntity folder) {
 		return BaseController.super.createFolder(folder, musicService);
 		/*
 		 * if (!services.isDupplicateName(folder.getCreator(), folder.getParent(),
@@ -66,7 +67,7 @@ public class MusicController implements BaseController<MusicFile> {
 	}
 
 	@Override
-	public ResponseEntity<?> editFilesParent(List<Map<String, String>> filesModels) {
+	public ResponseEntity<?> editFilesParent(FileMoveDTO filesModels) {
 		return BaseController.super.editFilesParent(filesModels, musicService);
 	}
 
