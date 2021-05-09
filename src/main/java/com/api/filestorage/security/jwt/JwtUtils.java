@@ -2,7 +2,6 @@ package com.api.filestorage.security.jwt;
 
 import java.util.Date;
 
-import com.api.filestorage.security.Constant;
 import com.api.filestorage.security.UserDetailsImpl;
 
 import org.slf4j.Logger;
@@ -34,7 +33,6 @@ public class JwtUtils {
 
 		return Jwts.builder().setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-				// .setExpiration(new Date((new Date()).getTime() + Constant.JWT_EXPIRATION))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
 	}
 
