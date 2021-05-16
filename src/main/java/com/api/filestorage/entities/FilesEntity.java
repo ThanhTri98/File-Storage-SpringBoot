@@ -1,6 +1,7 @@
 package com.api.filestorage.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ public abstract class FilesEntity {
 	private String parent;
 	private String creator;
 	@Column(name = "modify_date")
-	private LocalDate modifyDate;
+	private LocalDateTime modifyDate;
 	private int state;
 
 	public int getId() {
@@ -67,11 +68,12 @@ public abstract class FilesEntity {
 		this.creator = creator;
 	}
 
-	public LocalDate getModifyDate() {
-		return this.modifyDate;
+	public String getModifyDate() {
+		// return this.modifyDate;
+		return this.modifyDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 	}
 
-	public void setModifyDate(LocalDate modifyDate) {
+	public void setModifyDate(LocalDateTime modifyDate) {
 		this.modifyDate = modifyDate;
 	}
 

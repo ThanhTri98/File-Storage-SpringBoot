@@ -1,12 +1,15 @@
 package com.api.filestorage.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.api.filestorage.dto.RoleDTO;
 import com.api.filestorage.dto.UserDTO;
+import com.api.filestorage.entities.OtpEntity;
 import com.api.filestorage.entities.UserEntity;
+import com.api.filestorage.repository.OtpRepository;
 import com.api.filestorage.repository.UserRepository;
 import com.api.filestorage.security.UserDetailsImpl;
 import com.api.filestorage.security.jwt.JwtUtils;
@@ -29,8 +32,13 @@ public class UserService {
 
     @Autowired
     JwtUtils jwtUtils;
+
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OtpRepository otpRepository;
+    @Autowired
+    private MailService mailService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -71,11 +79,37 @@ public class UserService {
     }
 
     public void signUp(UserDTO user) {
-        RoleDTO role = new RoleDTO(1, "USER");
+        RoleDTO role = new RoleDTO(1, "ROLE_USER");
         user.getRoles().add(role);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        UserEntity userEntity = new UserEntity().toEntity(user);
-        userRepository.save(userEntity);
+        user.setIs_active(1);
+        userRepository.save(new UserEntity().toEntity(user));
+    }
+
+    public boolean validateOtpSignup(String uuid, String code) {
+        try {
+            return otpRepository.validOtp(uuid, Integer.parseInt(code)) != null;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+    }
+
+    public void sendEmail(String email, String uuid) {
+        int randomCode = mailService.sendEmail(email);
+        if (randomCode != 0) {
+            OtpEntity entity = new OtpEntity();
+            entity.setCode(randomCode);
+            entity.setUuid(uuid);
+            entity.setExpireTime(LocalDateTime.now().plusMinutes(3));
+            otpRepository.save(entity);
+        }
+    }
+
+    public static void main(String[] args) {
+        // LocalDateTime expire_time = LocalDateTime.now().plusMinutes(3);
+        // System.out.println(expire_time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd
+        // hh:mm:ss")));
     }
 
 }

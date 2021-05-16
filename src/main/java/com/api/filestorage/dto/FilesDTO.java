@@ -1,6 +1,7 @@
 package com.api.filestorage.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public abstract class FilesDTO {
     private int id;
@@ -10,7 +11,7 @@ public abstract class FilesDTO {
 	private String extension;
 	private String parent;
 	private String creator;
-	private LocalDate modifyDate;
+	private LocalDateTime modifyDate;
 	private int state;
 
     public int getId() {
@@ -69,11 +70,11 @@ public abstract class FilesDTO {
         this.creator = creator;
     }
 
-    public LocalDate getModifyDate() {
-        return this.modifyDate;
+    public String getModifyDate() {
+        return this.modifyDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
     }
 
-    public void setModifyDate(LocalDate modifyDate) {
+    public void setModifyDate(LocalDateTime modifyDate) {
         this.modifyDate = modifyDate;
     }
 

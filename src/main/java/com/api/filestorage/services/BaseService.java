@@ -1,6 +1,6 @@
 package com.api.filestorage.services;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +62,7 @@ public interface BaseService<T extends FilesEntity> {
             return false;
         // ----->
         files.setFile_sk(UUID.randomUUID().toString());
-        files.setModifyDate(LocalDate.now());
+        files.setModifyDate(LocalDateTime.now());
         repos.insert(files);
         return true;
     }
@@ -88,8 +88,8 @@ public interface BaseService<T extends FilesEntity> {
                 // ++ Vào độ sâu 1 tiếp tục kiểm tra các file và thư mục con
 
                 // Nếu là file
-                FilesEntity f = repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator, new_parent,
-                        data.getExtension(), data.getName());
+                FilesEntity f = repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator,
+                        new_parent, data.getExtension(), data.getName());
                 repos.editFilesParent(data.getId(), new_parent); // Thay đổi file bị trùng bằng file trùng
                 repos.delete(f); // xóa file bị trùng
             });

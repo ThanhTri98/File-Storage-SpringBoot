@@ -63,4 +63,5 @@ public class RoleEntity {
         this.name = role.getName();
         return this;
     }
+
 }
