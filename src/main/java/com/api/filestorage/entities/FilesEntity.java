@@ -9,11 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @MappedSuperclass
 public abstract class FilesEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 	private String file_sk;
 	private String name;
 	private long size;
@@ -24,7 +26,7 @@ public abstract class FilesEntity {
 	private LocalDateTime modifyDate;
 	private int state;
 
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
@@ -73,11 +75,16 @@ public abstract class FilesEntity {
 		return this.modifyDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 	}
 
+	@JsonIgnore
+	public LocalDateTime getDT() {
+		return this.modifyDate;
+	}
+
 	public void setModifyDate(LocalDateTime modifyDate) {
 		this.modifyDate = modifyDate;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

@@ -15,7 +15,7 @@ public class MailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    private Random random = new Random();
+    private static Random random = new Random();
 
     int sendEmail(String email) {
         try {

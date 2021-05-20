@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.dto.FileMoveDTO.Data;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.MusicFileEntity;
 import com.api.filestorage.repository.MusicRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class MusicService implements BaseService<MusicFileEntity> {
@@ -53,6 +55,22 @@ public class MusicService implements BaseService<MusicFileEntity> {
 	@Override
 	public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {
 		return BaseService.super.editFilesParent(filesModel, musicRepository);
+	}
+
+	@Override
+    public boolean uploadFile(MultipartFile file,String fileInfor) {
+        return BaseService.super.uploadFile(file,fileInfor, musicRepository);
+    }
+
+	// 20210519
+	@Override
+    public List<? extends FilesEntity> findAllFolderInParent(String creator, String parent) {
+        return BaseService.super.findAllFolderInParent(creator, parent, musicRepository);
+    }
+
+	@Override
+	public List<Data> copyFile(FileMoveDTO filesModel) {
+		return BaseService.super.copyFile(filesModel, musicRepository);
 	}
 
 }

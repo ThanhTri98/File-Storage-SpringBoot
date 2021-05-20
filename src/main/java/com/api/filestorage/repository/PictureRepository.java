@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface PictureRepository extends JpaRepository<PictureFileEntity, Integer>, BaseRepository<PictureFileEntity> {
+    
     @Modifying
     @Query(value = "UPDATE picturefile PF SET PF.NAME = :NEWNAME, PF.MODIFY_DATE=NOW() WHERE PF.ID = :ID", nativeQuery = true)
     void editFilesName(@Param("ID") int id, @Param("NEWNAME") String newName);
@@ -46,4 +47,7 @@ public interface PictureRepository extends JpaRepository<PictureFileEntity, Inte
     default void delete(@NonNull FilesEntity files) {
         this.deleteById(files.getId());
     }
+    // 20210519
+    @Query(value = "SELECT COUNT(ID) FROM picturefile MF WHERE MF.STATE = ?1  and CREATOR =?2 AND PARENT=?3 AND EXTENSION = ?4 AND NAME LIKE ?5", nativeQuery = true)
+    Integer countFileDuplicate(int state, String creator, String parent, String extension, String name);
 }

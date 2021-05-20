@@ -6,13 +6,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "videofile")
 public class VideoFileEntity extends FilesEntity {
-    private int length;
+    private long length;
 
-    public int getLength() {
+    public long getLength() {
         return this.length;
     }
 
-    public void setLength(int length) {
+    public void setLength(long length) {
         this.length = length;
     }
 

@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.api.filestorage.dto.FileMoveDTO;
+import com.api.filestorage.dto.FileMoveDTO.Data;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.PictureFileEntity;
 import com.api.filestorage.repository.PictureRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PictureService implements BaseService<PictureFileEntity> {
@@ -41,5 +43,20 @@ public class PictureService implements BaseService<PictureFileEntity> {
     public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {
         return BaseService.super.editFilesParent(filesModel, pictureRepository);
     }
+
+    @Override
+    public boolean uploadFile(MultipartFile file, String fileInfor) {
+        return BaseService.super.uploadFile(file, fileInfor, pictureRepository);
+    }
+
+    @Override
+    public List<? extends FilesEntity> findAllFolderInParent(String creator, String parent) {
+        return BaseService.super.findAllFolderInParent(creator, parent, pictureRepository);
+    }
+
+    @Override
+	public List<Data> copyFile(FileMoveDTO filesModel) {
+		return BaseService.super.copyFile(filesModel, pictureRepository);
+	}
 
 }

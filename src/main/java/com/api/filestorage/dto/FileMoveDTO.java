@@ -6,14 +6,21 @@ public class FileMoveDTO {
     private String new_parent;
     private String creator;
     private List<Data> datas;
-    private boolean is_replace;
+    private int type_copy_move;
 
-    public boolean getIs_replace() {
-        return this.is_replace;
+    @Override
+    public String toString() {
+        return "{" + " new_parent='" + getNew_parent() + "'" + ", creator='" + getCreator() + "'" + ", datas='"
+                + getDatas() + "'" + ", is_replace='" + getType_copy_move() + "'" + "}";
     }
 
-    public void setIs_replace(boolean is_replace) {
-        this.is_replace = is_replace;
+
+    public int getType_copy_move() {
+        return this.type_copy_move;
+    }
+
+    public void setType_copy_move(int type_copy_move) {
+        this.type_copy_move = type_copy_move;
     }
 
     public List<Data> getDatas() {
@@ -44,6 +51,11 @@ public class FileMoveDTO {
         private int id;
         private String name;
         private String extension;
+
+        @Override
+        public String toString() {
+            return "id " + id + ", name " + name + ", " + extension;
+        }
 
         public int getId() {
             return this.id;

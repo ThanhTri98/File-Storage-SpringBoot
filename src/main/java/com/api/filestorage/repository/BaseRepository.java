@@ -6,31 +6,38 @@ import com.api.filestorage.entities.FilesEntity;
 
 import org.springframework.lang.NonNull;
 
-public interface BaseRepository<T> {
-    // Find all find in folder
-    List<? extends FilesEntity> findByStateAndCreatorAndParent(int state, String creator, String parent);
+public interface BaseRepository<T extends FilesEntity> {
+        T findById(int id);
 
-    // Check file name is dupplicate in DB
-    T findByStateAndCreatorAndParentAndExtensionAndName(int state, String creator, String parent, String extension,
-            String name);
+        // Find all find in folder
+        List<? extends FilesEntity> findByStateAndCreatorAndParent(int state, String creator, String parent);
 
-    // <----------------EDIT NAME
-    void editFilesName(int id, String newName); // tmp - file
+        List<? extends FilesEntity> findByStateAndCreatorAndParentAndExtension(int state, String creator, String parent,
+                        String extension);
 
-    void editFilesName(String oldName, String newName); // tmp - folder
-    // ---------------->EDIT NAME
+        // Check file name is dupplicate in DB
+        T findByStateAndCreatorAndParentAndExtensionAndName(int state, String creator, String parent, String extension,
+                        String name);
 
-    // <----------------EDIT STATE
-    void editFilesState(int id, int state); // tmp - file
+        Integer countFileDuplicate(int state, String creator, String parent, String extension, String name);
 
-    void editFilesState(String name, int state, String creator); // tmp - folder
-    // ---------------->EDIT STATE
+        // <----------------EDIT NAME
+        void editFilesName(int id, String newName); // tmp - file
 
-    // <----------------MOVE
-    void editFilesParent(int id, String parent); // tmp - files
+        void editFilesName(String oldName, String newName); // tmp - folder
+        // ---------------->EDIT NAME
 
-    // ---------------->MOVE
-    void insert(@NonNull FilesEntity files); // tmp
+        // <----------------EDIT STATE
+        void editFilesState(int id, int state); // tmp - file
 
-    void delete(@NonNull FilesEntity files); // tmp
+        void editFilesState(String name, int state, String creator); // tmp - folder
+        // ---------------->EDIT STATE
+
+        // <----------------MOVE
+        void editFilesParent(int id, String parent); // tmp - files
+
+        // ---------------->MOVE
+        void insert(@NonNull FilesEntity files); // tmp
+
+        void delete(@NonNull FilesEntity files); // tmp
 }

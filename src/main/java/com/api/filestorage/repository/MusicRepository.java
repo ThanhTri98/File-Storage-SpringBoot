@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface MusicRepository extends JpaRepository<MusicFileEntity, Integer>, BaseRepository<MusicFileEntity> {
+
     // update file name
     @Modifying
     @Query(value = "UPDATE musicfile MF SET MF.NAME = :NEWNAME, MF.MODIFY_DATE=NOW() WHERE MF.ID = :ID", nativeQuery = true)
@@ -47,4 +48,8 @@ public interface MusicRepository extends JpaRepository<MusicFileEntity, Integer>
     default void delete(@NonNull FilesEntity files) {
         this.deleteById(files.getId());
     }
+
+    // 20210519
+    @Query(value = "SELECT COUNT(ID) FROM musicfile MF WHERE MF.STATE = ?1  and CREATOR =?2 AND PARENT=?3 AND EXTENSION = ?4 AND NAME LIKE ?5", nativeQuery = true)
+    Integer countFileDuplicate(int state, String creator, String parent, String extension, String name);
 }
