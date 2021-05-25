@@ -8,6 +8,7 @@ import com.api.filestorage.dto.FileMoveDTO.Data;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.PictureFileEntity;
 import com.api.filestorage.repository.PictureRepository;
+import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,8 @@ public class PictureService implements BaseService<PictureFileEntity> {
     private PictureRepository pictureRepository;
 
     @Override
-    public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
-        return BaseService.super.findAllFileInParent(creator, parent, pictureRepository);
+    public List<? extends FilesEntity> findAllFileInParent(int state,String creator, String parent) {
+        return BaseService.super.findAllFileInParent(state,creator, parent, pictureRepository);
     }
 
     @Override
@@ -34,10 +35,9 @@ public class PictureService implements BaseService<PictureFileEntity> {
     }
 
     @Override
-    public void editFilesState(Map<String, String> filesModel) {
-        BaseService.super.editFilesState(filesModel, pictureRepository);
-
-    }
+    public void editFilesState(TrashOrUnTrash trash) {
+		BaseService.super.editFilesState(trash, pictureRepository);
+	}
 
     @Override
     public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {

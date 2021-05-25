@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import com.api.filestorage.dto.UserDTO;
 import com.api.filestorage.dto.auth.DataRequestOTP;
+import com.api.filestorage.entities.FilesEntity;
+import com.api.filestorage.entities.UserEntity;
 import com.api.filestorage.security.payload.request.LoginRequest;
 import com.api.filestorage.services.UserService;
 
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +30,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<UserDTO> findAll() {
+    public List<UserEntity> findAll() {
         return userService.findAll();
     }
 
@@ -35,7 +38,6 @@ public class UserController {
     public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok().body(userService.signIn(loginRequest));
     }
-
 
     @PostMapping("/signup/validate/otp")
     public ResponseEntity<?> validateOtp(@RequestBody DataRequestOTP dataRequestOTP) {
@@ -74,6 +76,22 @@ public class UserController {
 
         }).start();
         return ResponseEntity.ok().body("");
+    }
+
+    @GetMapping("/user/{userName}")
+    public long getUsedMemory(@PathVariable String userName) {
+        return userService.getUsedMemory(userName);
+    }
+
+    @GetMapping("/user/total/{price}")
+    public long getTotalMemory(@PathVariable int price) {
+        return userService.getTotalMemory(price);
+    }
+
+    // 20210523
+    @GetMapping("/user/trash/{username}")
+    public List<FilesEntity> getTrash(@PathVariable String username) {
+        return userService.getTrash(username);
     }
 
 

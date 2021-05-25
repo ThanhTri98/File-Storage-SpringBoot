@@ -8,6 +8,7 @@ import org.springframework.lang.NonNull;
 
 public interface BaseRepository<T extends FilesEntity> {
         T findById(int id);
+        List<? extends FilesEntity> findByStateAndCreator(int state, String creator);
 
         // Find all find in folder
         List<? extends FilesEntity> findByStateAndCreatorAndParent(int state, String creator, String parent);

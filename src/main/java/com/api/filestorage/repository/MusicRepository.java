@@ -33,11 +33,11 @@ public interface MusicRepository extends JpaRepository<MusicFileEntity, Integer>
     // 20210502
     // EDIT FILES STATE
     @Modifying
-    @Query(value = "UPDATE musicfile MF SET MF.STATE = ?2 WHERE MF.ID=?1", nativeQuery = true)
+    @Query(value = "UPDATE musicfile MF SET MF.STATE = ?2, MF.MODIFY_DATE=NOW() WHERE MF.ID=?1", nativeQuery = true)
     void editFilesState(int id, int state);
 
     @Modifying
-    @Query(value = "UPDATE musicfile MF SET MF.STATE = ?2 WHERE MF.PARENT=?1 AND MF.CREATOR=?3", nativeQuery = true)
+    @Query(value = "UPDATE musicfile MF SET MF.STATE = ?2, MF.MODIFY_DATE=NOW() WHERE MF.PARENT=?1 AND MF.CREATOR=?3", nativeQuery = true)
     void editFilesState(String nameOfParent, int state, String creator);
 
     @Modifying
@@ -52,4 +52,7 @@ public interface MusicRepository extends JpaRepository<MusicFileEntity, Integer>
     // 20210519
     @Query(value = "SELECT COUNT(ID) FROM musicfile MF WHERE MF.STATE = ?1  and CREATOR =?2 AND PARENT=?3 AND EXTENSION = ?4 AND NAME LIKE ?5", nativeQuery = true)
     Integer countFileDuplicate(int state, String creator, String parent, String extension, String name);
+
+    @Query(value = "SELECT SUM(MF.SIZE) FROM musicfile MF WHERE CREATOR =?1 AND EXTENSION<>?2", nativeQuery = true)
+    Long getTotalSize(String creator, String extension);
 }

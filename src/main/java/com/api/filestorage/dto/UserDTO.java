@@ -14,6 +14,24 @@ public class UserDTO {
     private String email;
     private int is_active;
     private Set<RoleDTO> roles = new HashSet<>();
+    private String acc_pkg_name;
+    private long acc_pkg_size;
+
+    public String getAcc_pkg_name() {
+        return this.acc_pkg_name;
+    }
+
+    public void setAcc_pkg_name(String acc_pkg_name) {
+        this.acc_pkg_name = acc_pkg_name;
+    }
+
+    public long getAcc_pkg_size() {
+        return this.acc_pkg_size;
+    }
+
+    public void setAcc_pkg_size(long acc_pkg_size) {
+        this.acc_pkg_size = acc_pkg_size;
+    }
 
     public String getUsername() {
         return this.username;
@@ -69,6 +87,8 @@ public class UserDTO {
         this.full_name = user.getFull_name();
         this.email = user.getEmail();
         this.is_active = user.getIs_active();
+        this.acc_pkg_name = user.getAcc_pkg().getName();
+        this.acc_pkg_size = user.getAcc_pkg().getTotal_size();
         this.roles = user.getRoles().stream().map(entity -> {
             return new RoleDTO().toDTO(entity);
         }).collect(Collectors.toSet());
@@ -77,14 +97,9 @@ public class UserDTO {
 
     @Override
     public String toString() {
-        return "{" +
-            " username='" + getUsername() + "'" +
-            ", password='" + getPassword() + "'" +
-            ", full_name='" + getFull_name() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", is_active='" + getIs_active() + "'" +
-            ", roles='" + getRoles().toString() + "'" +
-            "}";
+        return "{" + " username='" + getUsername() + "'" + ", password='" + getPassword() + "'" + ", full_name='"
+                + getFull_name() + "'" + ", email='" + getEmail() + "'" + ", is_active='" + getIs_active() + "'"
+                + ", roles='" + getRoles().toString() + "'" + "}";
     }
 
 }

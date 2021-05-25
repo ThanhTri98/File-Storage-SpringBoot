@@ -12,6 +12,7 @@ import java.util.UUID;
 import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.repository.BaseRepository;
+import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,12 +20,13 @@ public interface BaseService<T extends FilesEntity> {
     static final int DEFAULT_STATE = 1;
     static final String FOLDER_EXT = "FOLDER";
 
-    List<? extends FilesEntity> findAllFileInParent(String creator, String parent);
+    List<? extends FilesEntity> findAllFileInParent(int state, String creator, String parent);
 
-    default List<? extends FilesEntity> findAllFileInParent(String creator, String parent, BaseRepository<T> repos) {
+    default List<? extends FilesEntity> findAllFileInParent(int state, String creator, String parent,
+            BaseRepository<T> repos) {
         if (parent == null)
             parent = "";
-        return repos.findByStateAndCreatorAndParent(DEFAULT_STATE, creator, parent);
+        return repos.findByStateAndCreatorAndParent(state, creator, parent);
     }
 
     boolean editFilesName(Map<String, String> filesModel);
@@ -48,14 +50,33 @@ public interface BaseService<T extends FilesEntity> {
         return true;
     }
 
-    void editFilesState(Map<String, String> filesModel);
+    // move to trash or else
+    void editFilesState(TrashOrUnTrash trash);
 
-    default void editFilesState(Map<String, String> filesModel, BaseRepository<T> repos) {
-        repos.editFilesState(Integer.parseInt(filesModel.get("id")), Integer.parseInt(filesModel.get("state")));
-        if (filesModel.get("extension").equals(FOLDER_EXT))
-            repos.editFilesState(filesModel.get("name"), Integer.parseInt(filesModel.get("state")),
-                    filesModel.get("creator"));
+    default void editFilesState(TrashOrUnTrash trash, BaseRepository<T> repos) {
+        // System.out.println(trash.getCreator());
+        trash.getDatas().forEach(data -> {
+            trashProcess(data, trash.getCreator(), trash.getState(), repos);
+        });
+    }
 
+    default void trashProcess(TrashOrUnTrash.Data data, String creator, int state, BaseRepository<T> repos) {
+        repos.editFilesState(data.getId(), state);
+        if (data.getExtension().equals(FOLDER_EXT)) {
+            repos.editFilesState(data.getName(), state, creator);
+            List<? extends FilesEntity> files = repos.findByStateAndCreatorAndParent(state, creator, data.getName());
+            files.forEach(file -> {
+                if (file.getExtension().equals(FOLDER_EXT)) {
+                    TrashOrUnTrash.Data data1 = new TrashOrUnTrash.Data();
+                    data1.setId(file.getId());
+                    data1.setName(file.getName());
+                    data1.setExtension(file.getExtension());
+                    trashProcess(data1, creator, state, repos);
+                } else {
+                    repos.editFilesState(file.getId(), state);
+                }
+            });
+        }
     }
 
     boolean createFolder(FilesEntity files);
@@ -63,15 +84,18 @@ public interface BaseService<T extends FilesEntity> {
     default boolean createFolder(FilesEntity files, BaseRepository<T> repos) {
         // Check name is duplicate
         if (repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, files.getCreator(),
-                files.getParent(), files.getExtension(), files.getName()) != null)
+                files.getParent(), FOLDER_EXT, files.getName()) != null)
             return false;
         // ----->
+        files.setExtension(FOLDER_EXT);
+        files.setState(DEFAULT_STATE);
         files.setFile_sk(UUID.randomUUID().toString());
         files.setModifyDate(LocalDateTime.now());
         repos.insert(files);
         return true;
     }
 
+    // move
     List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel);
 
     default List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel, BaseRepository<T> repos) {
@@ -142,7 +166,7 @@ public interface BaseService<T extends FilesEntity> {
             filesModel.getDatas().forEach(data -> {
                 int count = repos.countFileDuplicate(1, creator, new_parent, data.getExtension(), "%" + data.getName());
                 FilesEntity files = HelperClass.transferBaseToInstance(repos.findById(data.getId()));
-                files.setName("(" + count + ") " + data.getName());
+                files.setName("Copy(" + count + ") " + data.getName());
                 files.setParent(new_parent);
                 repos.insert(files);
             });
@@ -185,15 +209,7 @@ public interface BaseService<T extends FilesEntity> {
             // Check name is duplicate
             int count = repos.countFileDuplicate(1, creator, parent, extension, "%" + name);
             if (count > 0)
-                name = "(" + count + ") " + name;
-            // System.out.println(count);
-            // System.out.println(typeOrExtension[0]);
-            // System.out.println(size);
-            // System.out.println(extension);
-            // System.out.println(name);
-            // System.out.println(parent);
-            // System.out.println(creator);
-            // System.out.println("\n\n\n");
+                name = "Copy(" + count + ") " + name;
 
             FilesEntity filesEntity = HelperClass.getFilesEntity(extension, path);
             filesEntity.setSize(size);

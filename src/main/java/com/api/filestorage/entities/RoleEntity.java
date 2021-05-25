@@ -13,6 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.api.filestorage.dto.RoleDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "role")
@@ -24,7 +25,8 @@ public class RoleEntity {
     private String name;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<UserEntity> users = new HashSet<>();;
+    @JsonIgnore
+    private Set<UserEntity> users = new HashSet<>();
 
     public Set<UserEntity> getUsers() {
         return this.users;

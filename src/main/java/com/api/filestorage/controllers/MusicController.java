@@ -9,6 +9,7 @@ import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.MusicFileEntity;
 import com.api.filestorage.services.MusicService;
+import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,8 @@ public class MusicController implements BaseController<MusicFileEntity> {
 	 * BaseController.super.findAllFileInParent(creator, parent, services); }
 	 */
 	@Override
-	public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
-		return BaseController.super.findAllFileInParent(creator, parent, musicService);
+	public List<? extends FilesEntity> findAllFileInParent(int state,String creator, String parent) {
+		return BaseController.super.findAllFileInParent(state,creator, parent, musicService);
 	}
 
 	@Override // filesModel contain: id, old_name, new_name, cur_parent, extension, creator
@@ -65,8 +66,8 @@ public class MusicController implements BaseController<MusicFileEntity> {
 	}
 
 	@Override
-	public void editFilesState(Map<String, String> filesModel) {
-		BaseController.super.editFilesState(filesModel, musicService);
+	public void editFilesState(TrashOrUnTrash trash) {
+		BaseController.super.editFilesState(trash, musicService);
 	}
 
 	@Override

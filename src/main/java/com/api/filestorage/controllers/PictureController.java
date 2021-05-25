@@ -9,6 +9,7 @@ import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.PictureFileEntity;
 import com.api.filestorage.services.PictureService;
+import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class PictureController implements BaseController<PictureFileEntity> {
 	private PictureService pictureService;
 
 	@Override
-	public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
-		return BaseController.super.findAllFileInParent(creator, parent, pictureService);
+	public List<? extends FilesEntity> findAllFileInParent(int state,String creator, String parent) {
+		return BaseController.super.findAllFileInParent(state,creator, parent, pictureService);
 	}
 
 	@Override
@@ -38,8 +39,8 @@ public class PictureController implements BaseController<PictureFileEntity> {
 	}
 
 	@Override
-	public void editFilesState(Map<String, String> filesModel) {
-		BaseController.super.editFilesState(filesModel, pictureService);
+	public void editFilesState(TrashOrUnTrash trash) {
+		BaseController.super.editFilesState(trash, pictureService);
 	}
 
 	@Override

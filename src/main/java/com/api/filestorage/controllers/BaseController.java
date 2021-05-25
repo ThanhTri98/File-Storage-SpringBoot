@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.services.BaseService;
+import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface BaseController<T extends FilesEntity> {
 
-    @GetMapping(value = { "/{creator}", "/{creator/}", "/{creator}/{parent}" })
-    List<? extends FilesEntity> findAllFileInParent(@PathVariable("creator") String creator,
+    @GetMapping(value = { "/{state}/{creator}", "/{state}/{creator/}", "/{state}/{creator}/{parent}" })
+    List<? extends FilesEntity> findAllFileInParent(@PathVariable int state, @PathVariable("creator") String creator,
             @PathVariable(required = false) String parent);
 
-    default List<? extends FilesEntity> findAllFileInParent(String creator, String parent,
+    default List<? extends FilesEntity> findAllFileInParent(int state, String creator, String parent,
             @NonNull BaseService<T> services) {
-        return services.findAllFileInParent(creator, parent);
+        return services.findAllFileInParent(state, creator, parent);
     }
 
     @PutMapping("/name")
@@ -51,11 +52,11 @@ public interface BaseController<T extends FilesEntity> {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PutMapping("/state") // id, [name, extension], state, creator ->>>> trash, untrash
-    void editFilesState(@RequestBody Map<String, String> filesModel);
+    @PutMapping("/trash") // id, [name, extension], state, creator ->>>> trash, untrash
+    void editFilesState(@RequestBody TrashOrUnTrash trash);
 
-    default void editFilesState(Map<String, String> filesModel, @NonNull BaseService<T> services) {
-        services.editFilesState(filesModel);
+    default void editFilesState(TrashOrUnTrash trash, @NonNull BaseService<T> services) {
+        services.editFilesState(trash);
     }
 
     @PutMapping("/move") // id, [name, extension], new_parent, creator ->>>> move
@@ -124,5 +125,6 @@ public interface BaseController<T extends FilesEntity> {
             return new ResponseEntity<>("Done", HttpStatus.OK);
         }
     }
+  
 
 }

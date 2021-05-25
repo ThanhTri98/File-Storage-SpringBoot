@@ -18,25 +18,64 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private String full_name;
     private String email;
-    private int is_active;
+    // private int is_active;
     private Collection<? extends GrantedAuthority> authorities;
+    private String acc_pkg_name;
+    private long acc_pkg_size;
 
-    public UserDetailsImpl(String username, String password, String email, String full_name, int is_active,
-            Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(String username, String password, String email, String full_name, String acc_pkg_name,
+            long acc_pkg_size, Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.is_active = is_active;
         this.full_name = full_name;
         this.authorities = authorities;
+        this.acc_pkg_name = acc_pkg_name;
+        this.acc_pkg_size = acc_pkg_size;
     }
 
     public static UserDetailsImpl build(UserDTO user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 
-        return new UserDetailsImpl(user.getUsername(), user.getPassword(), user.getEmail(),user.getFull_name(), user.getIs_active(),
-                authorities);
+        return new UserDetailsImpl(user.getUsername(), user.getPassword(), user.getEmail(), user.getFull_name(),
+                user.getAcc_pkg_name(), user.getAcc_pkg_size(), authorities);
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAuthorities(Collection<?extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public String getAcc_pkg_name() {
+        return this.acc_pkg_name;
+    }
+
+    public void setAcc_pkg_name(String acc_pkg_name) {
+        this.acc_pkg_name = acc_pkg_name;
+    }
+
+    public long getAcc_pkg_size() {
+        return this.acc_pkg_size;
+    }
+
+    public void setAcc_pkg_size(long acc_pkg_size) {
+        this.acc_pkg_size = acc_pkg_size;
     }
 
     @Override
@@ -82,10 +121,6 @@ public class UserDetailsImpl implements UserDetails {
         return this.email;
     }
 
-    public int getIs_active() {
-        return this.is_active;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -94,9 +129,12 @@ public class UserDetailsImpl implements UserDetails {
             return false;
         }
         UserDetailsImpl userDetailsImpl = (UserDetailsImpl) o;
-        return Objects.equals(username, userDetailsImpl.username) && Objects.equals(password, userDetailsImpl.password)
-                && Objects.equals(full_name, userDetailsImpl.full_name) && Objects.equals(email, userDetailsImpl.email)
-                && is_active == userDetailsImpl.is_active && Objects.equals(authorities, userDetailsImpl.authorities);
+        return Objects.equals(username, userDetailsImpl.username) && Objects.equals(password, userDetailsImpl.password) && Objects.equals(full_name, userDetailsImpl.full_name) && Objects.equals(email, userDetailsImpl.email) && Objects.equals(authorities, userDetailsImpl.authorities) && Objects.equals(acc_pkg_name, userDetailsImpl.acc_pkg_name) && acc_pkg_size == userDetailsImpl.acc_pkg_size;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password, full_name, email, authorities, acc_pkg_name, acc_pkg_size);
     }
 
 }

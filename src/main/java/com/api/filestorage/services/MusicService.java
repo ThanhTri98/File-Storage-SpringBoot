@@ -8,6 +8,7 @@ import com.api.filestorage.dto.FileMoveDTO.Data;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.MusicFileEntity;
 import com.api.filestorage.repository.MusicRepository;
+import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,8 +39,8 @@ public class MusicService implements BaseService<MusicFileEntity> {
 	// }
 
 	@Override
-	public List<? extends FilesEntity> findAllFileInParent(String creator, String parent) {
-		return BaseService.super.findAllFileInParent(creator, parent, musicRepository);
+	public List<? extends FilesEntity> findAllFileInParent(int state, String creator, String parent) {
+		return BaseService.super.findAllFileInParent(state, creator, parent, musicRepository);
 	}
 
 	@Override
@@ -48,8 +49,8 @@ public class MusicService implements BaseService<MusicFileEntity> {
 	}
 
 	@Override
-	public void editFilesState(Map<String, String> filesModel) {
-		BaseService.super.editFilesState(filesModel, musicRepository);
+	public void editFilesState(TrashOrUnTrash trash) {
+		BaseService.super.editFilesState(trash, musicRepository);
 	}
 
 	@Override
@@ -58,15 +59,15 @@ public class MusicService implements BaseService<MusicFileEntity> {
 	}
 
 	@Override
-    public boolean uploadFile(MultipartFile file,String fileInfor) {
-        return BaseService.super.uploadFile(file,fileInfor, musicRepository);
-    }
+	public boolean uploadFile(MultipartFile file, String fileInfor) {
+		return BaseService.super.uploadFile(file, fileInfor, musicRepository);
+	}
 
 	// 20210519
 	@Override
-    public List<? extends FilesEntity> findAllFolderInParent(String creator, String parent) {
-        return BaseService.super.findAllFolderInParent(creator, parent, musicRepository);
-    }
+	public List<? extends FilesEntity> findAllFolderInParent(String creator, String parent) {
+		return BaseService.super.findAllFolderInParent(creator, parent, musicRepository);
+	}
 
 	@Override
 	public List<Data> copyFile(FileMoveDTO filesModel) {
