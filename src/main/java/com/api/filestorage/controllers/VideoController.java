@@ -9,6 +9,7 @@ import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.VideoFileEntity;
 import com.api.filestorage.services.VideoService;
+import com.api.filestorage.services.ClazzData.DataShared;
 import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class VideoController implements BaseController<VideoFileEntity> {
 	private VideoService videoService;
 
 	@Override
-	public List<? extends FilesEntity> findAllFileInParent(int state,String creator, String parent) {
-		return BaseController.super.findAllFileInParent(state,creator, parent, videoService);
+	public List<? extends FilesEntity> findAllFileInParent(int state, String creator, String parent) {
+		return BaseController.super.findAllFileInParent(state, creator, parent, videoService);
 	}
 
 	@Override // filesModel contain: id, old_name, new_name, cur_parent, extension, creator
@@ -51,15 +52,22 @@ public class VideoController implements BaseController<VideoFileEntity> {
 
 	@Override
 	public ResponseEntity<?> uploadFile(MultipartFile file, HttpServletRequest request) {
-		return BaseController.super.uploadFile(file,request.getRequestURI(), videoService);
+		return BaseController.super.uploadFile(file, request.getRequestURI(), videoService);
 	}
+
 	@Override
 	public List<? extends FilesEntity> findAllFolderInParent(String creator, String parent) {
 		return BaseController.super.findAllFolderInParent(creator, parent, videoService);
 	}
+
 	@Override
 	public ResponseEntity<?> copyFile(FileMoveDTO filesModel) {
 		return BaseController.super.copyFile(filesModel, videoService);
+	}
+
+	@Override
+	public List<DataShared> findAllFileInParent( String creator, String parent) {
+		return BaseController.super.findAllFileInParent(creator, parent, videoService);
 	}
 
 }

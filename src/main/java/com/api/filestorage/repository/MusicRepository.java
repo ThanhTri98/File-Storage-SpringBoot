@@ -1,5 +1,7 @@
 package com.api.filestorage.repository;
 
+import java.util.List;
+
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.MusicFileEntity;
 
@@ -55,4 +57,14 @@ public interface MusicRepository extends JpaRepository<MusicFileEntity, Integer>
 
     @Query(value = "SELECT SUM(MF.SIZE) FROM musicfile MF WHERE CREATOR =?1 AND EXTENSION<>?2", nativeQuery = true)
     Long getTotalSize(String creator, String extension);
+
+    @Query(value = "SELECT * FROM musicfile MF WHERE MF.CREATOR =?1 AND MF.STATE=1 AND MF.EXTENSION<>'FOLDER' AND MF.NAME LIKE ?2 ", nativeQuery = true)
+    List<MusicFileEntity> findSearch(String creator, String query);
+
+    // ADMIN
+    @Query(value = "SELECT SUM(MF.SIZE) FROM musicfile MF WHERE EXTENSION<>'FOLDER'", nativeQuery = true)
+    Long getTotalSize();
+
+    @Query(value = "SELECT COUNT(MF.ID) FROM musicfile MF WHERE EXTENSION<>'FOLDER'", nativeQuery = true)
+    int getTotalNumberTypeFile();
 }

@@ -9,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "accountpackage")
 public class AccountPackageEntity {
@@ -22,7 +20,6 @@ public class AccountPackageEntity {
     private int price;
 
     @OneToMany(mappedBy = "acc_pkg")
-    @JsonIgnore
     private Set<UserEntity> users;
 
     public Set<UserEntity> getUsers() {

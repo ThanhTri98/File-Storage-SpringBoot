@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.api.filestorage.dto.UserDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "user")
@@ -33,21 +32,11 @@ public class UserEntity {
     private AccountPackageEntity acc_pkg;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<BillHistoryEntity> bills;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "videofile_shared", joinColumns = @JoinColumn(name = "owner"), inverseJoinColumns = @JoinColumn(name = "file_id"))
-    private List<VideoFileEntity> videos_owner;
-
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "videofile_shared", joinColumns = @JoinColumn(name = "receiver"), inverseJoinColumns = @JoinColumn(name = "file_id"))
-    private List<VideoFileEntity> videos_receiver;
 
     public List<BillHistoryEntity> getBills() {
         return this.bills;
@@ -123,22 +112,6 @@ public class UserEntity {
             return new RoleEntity().toEntity(r);
         }).collect(Collectors.toSet());
         return this;
-    }
-
-    public List<VideoFileEntity> getVideos_owner() {
-        return this.videos_owner;
-    }
-
-    public void setVideos_owner(List<VideoFileEntity> videos_owner) {
-        this.videos_owner = videos_owner;
-    }
-
-    public List<VideoFileEntity> getVideos_receiver() {
-        return this.videos_receiver;
-    }
-
-    public void setVideos_receiver(List<VideoFileEntity> videos_receiver) {
-        this.videos_receiver = videos_receiver;
     }
 
     @Override

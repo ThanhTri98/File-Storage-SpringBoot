@@ -1,5 +1,7 @@
 package com.api.filestorage.repository;
 
+import java.util.List;
+
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.PictureFileEntity;
 
@@ -13,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface PictureRepository extends JpaRepository<PictureFileEntity, Integer>, BaseRepository<PictureFileEntity> {
-    
+public interface PictureRepository
+        extends JpaRepository<PictureFileEntity, Integer>, BaseRepository<PictureFileEntity> {
+
     @Modifying
     @Query(value = "UPDATE picturefile PF SET PF.NAME = :NEWNAME, PF.MODIFY_DATE=NOW() WHERE PF.ID = :ID", nativeQuery = true)
     void editFilesName(@Param("ID") int id, @Param("NEWNAME") String newName);
@@ -47,10 +50,21 @@ public interface PictureRepository extends JpaRepository<PictureFileEntity, Inte
     default void delete(@NonNull FilesEntity files) {
         this.deleteById(files.getId());
     }
+
     // 20210519
     @Query(value = "SELECT COUNT(ID) FROM picturefile MF WHERE MF.STATE = ?1  and CREATOR =?2 AND PARENT=?3 AND EXTENSION = ?4 AND NAME LIKE ?5", nativeQuery = true)
     Integer countFileDuplicate(int state, String creator, String parent, String extension, String name);
 
     @Query(value = "SELECT SUM(MF.SIZE) FROM picturefile MF WHERE CREATOR =?1 AND EXTENSION<>?2", nativeQuery = true)
     Long getTotalSize(String creator, String extension);
+
+    @Query(value = "SELECT * FROM picturefile MF WHERE MF.CREATOR =?1 AND MF.STATE=1 AND MF.EXTENSION<>'FOLDER' AND MF.NAME LIKE ?2 ", nativeQuery = true)
+    List<PictureFileEntity> findSearch(String creator, String query);
+
+    // ADMIN
+    @Query(value = "SELECT SUM(MF.SIZE) FROM picturefile MF WHERE EXTENSION<>'FOLDER'", nativeQuery = true)
+    Long getTotalSize();
+
+    @Query(value = "SELECT COUNT(MF.ID) FROM picturefile MF WHERE EXTENSION<>'FOLDER'", nativeQuery = true)
+    int getTotalNumberTypeFile();
 }

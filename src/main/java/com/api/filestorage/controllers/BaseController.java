@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.services.BaseService;
+import com.api.filestorage.services.ClazzData.DataShared;
 import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,14 @@ public interface BaseController<T extends FilesEntity> {
     default List<? extends FilesEntity> findAllFileInParent(int state, String creator, String parent,
             @NonNull BaseService<T> services) {
         return services.findAllFileInParent(state, creator, parent);
+    }
+
+    @GetMapping(value = { "/shared/{creator}", "/shared/{creator/}", "/shared/{creator}/{parent}" })
+    List<DataShared> findAllFileInParent(@PathVariable("creator") String creator,
+            @PathVariable(required = false) String parent);
+
+    default List<DataShared> findAllFileInParent(String creator, String parent, @NonNull BaseService<T> services) {
+        return services.findAllFileInParent(creator, parent);
     }
 
     @PutMapping("/name")
@@ -125,6 +134,5 @@ public interface BaseController<T extends FilesEntity> {
             return new ResponseEntity<>("Done", HttpStatus.OK);
         }
     }
-  
 
 }

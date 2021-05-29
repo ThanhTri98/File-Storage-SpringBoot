@@ -10,18 +10,26 @@ import com.api.filestorage.dto.RoleDTO;
 import com.api.filestorage.dto.UserDTO;
 import com.api.filestorage.entities.AccountPackageEntity;
 import com.api.filestorage.entities.FilesEntity;
+import com.api.filestorage.entities.MusicFileEntity;
 import com.api.filestorage.entities.OtpEntity;
+import com.api.filestorage.entities.PictureFileEntity;
 import com.api.filestorage.entities.UserEntity;
+import com.api.filestorage.entities.VideoFileEntity;
+import com.api.filestorage.entities.file_shared.BaseFileShared;
 import com.api.filestorage.repository.AccountPackageRepository;
 import com.api.filestorage.repository.MusicRepository;
 import com.api.filestorage.repository.OtpRepository;
 import com.api.filestorage.repository.PictureRepository;
 import com.api.filestorage.repository.UserRepository;
 import com.api.filestorage.repository.VideoRepository;
+import com.api.filestorage.repository.file_shared.MusicSharedRepository;
+import com.api.filestorage.repository.file_shared.PictureSharedRepository;
+import com.api.filestorage.repository.file_shared.VideoSharedRepository;
 import com.api.filestorage.security.UserDetailsImpl;
 import com.api.filestorage.security.jwt.JwtUtils;
 import com.api.filestorage.security.payload.request.LoginRequest;
 import com.api.filestorage.security.payload.response.JwtResponse;
+import com.api.filestorage.services.ClazzData.DataShared;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,7 +60,7 @@ public class UserService {
 
     public List<UserEntity> findAll() {
         // return userRepository.findAll().stream().map(u -> {
-        //     return new UserDTO().toDTO(u);
+        // return new UserDTO().toDTO(u);
         // }).collect(Collectors.toList());
         return userRepository.findAll();
     }
@@ -149,6 +157,32 @@ public class UserService {
         return rs;
     }
 
+    public List<DataShared> getShared(String username) {
+        List<? extends BaseFileShared> videos = videoSharedRepository.findByReceiver(username);
+        List<? extends BaseFileShared> pictures = pictureSharedRepository.findByReceiver(username);
+        List<? extends BaseFileShared> musics = musicSharedRepository.findByReceiver(username);
+        List<DataShared> rs = new ArrayList<>();
+        rs.addAll(videos.stream().map(f -> {
+            VideoFileEntity entity = videoRepository.findById(f.getFile_id());
+            return new DataShared(f.getFile_id(), entity.getFile_sk(), entity.getName(), entity.getSize(),
+                    entity.getExtension(), entity.getParent(), f.getOwner(), "videos");
+        }).collect(Collectors.toList()));
+
+        rs.addAll(pictures.stream().map(f -> {
+            PictureFileEntity entity = pictureRepository.findById(f.getFile_id());
+            return new DataShared(f.getFile_id(), entity.getFile_sk(), entity.getName(), entity.getSize(),
+                    entity.getExtension(), entity.getParent(), f.getOwner(), "pictures");
+        }).collect(Collectors.toList()));
+
+        rs.addAll(musics.stream().map(f -> {
+            MusicFileEntity entity = musicRepository.findById(f.getFile_id());
+            return new DataShared(f.getFile_id(), entity.getFile_sk(), entity.getName(), entity.getSize(),
+                    entity.getExtension(), entity.getParent(), f.getOwner(), "musics");
+        }).collect(Collectors.toList()));
+
+        return rs;
+    }
+
     private List<? extends FilesEntity> getOnlyFolderParent(List<? extends FilesEntity> list, String kind) {
         // kind: định nghĩa file đó thuộc nhóm nào (music, video, picture)
         // Vì thuộc tính parent trong trường hợp này k dùng nên lấy set tạm
@@ -161,12 +195,48 @@ public class UserService {
         }).collect(Collectors.toList());
     }
 
+    public String findByUserNameOrEmail(String text) {
+        UserEntity userEntity;
+        if (text.contains("@")) {
+            userEntity = userRepository.findByEmail(text);
+            if (userEntity != null)
+                return userEntity.getEmail();
+            return "";
+        } else {
+            userEntity = userRepository.findByUsername(text);
+            if (userEntity != null)
+                return userEntity.getUsername();
+            return "";
+        }
+    }
+
+    public List<FilesEntity> getListSearch(String creator, String query) {
+        List<FilesEntity> rs = new ArrayList<>();
+        String transQue = "%"+query+"%";
+        List<MusicFileEntity> musics = musicRepository.findSearch(creator, transQue);
+        List<VideoFileEntity> videos = videoRepository.findSearch(creator, transQue);
+        List<PictureFileEntity> pictures = pictureRepository.findSearch(creator, transQue);
+        rs.addAll(musics);
+        rs.addAll(videos);
+        rs.addAll(pictures);
+        return rs;
+    }
+
     @Autowired
     private MusicRepository musicRepository;
     @Autowired
     private PictureRepository pictureRepository;
     @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
+    private VideoSharedRepository videoSharedRepository;
+    @Autowired
+    private MusicSharedRepository musicSharedRepository;
+    @Autowired
+    private PictureSharedRepository pictureSharedRepository;
+
     @Autowired
     private AccountPackageRepository AccountPackageEntity;
+
 }

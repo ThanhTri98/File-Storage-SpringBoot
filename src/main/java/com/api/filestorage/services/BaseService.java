@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.repository.BaseRepository;
+import com.api.filestorage.services.ClazzData.DataShared;
 import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +29,18 @@ public interface BaseService<T extends FilesEntity> {
         if (parent == null)
             parent = "";
         return repos.findByStateAndCreatorAndParent(state, creator, parent);
+    }
+
+    List<DataShared> findAllFileInParent(String creator, String parent);
+
+    default List<DataShared> findAllFileInParent(String creator, String parent, String kind,
+            BaseRepository<T> repos) {
+        if (parent == null)
+            parent = "";
+        return repos.findByStateAndCreatorAndParent(DEFAULT_STATE, creator, parent).stream().map(f -> {
+            return new DataShared(f.getId(), f.getFile_sk(), f.getName(), f.getSize(), f.getExtension(), f.getParent(),
+            creator, kind);
+        }).collect(Collectors.toList());
     }
 
     boolean editFilesName(Map<String, String> filesModel);

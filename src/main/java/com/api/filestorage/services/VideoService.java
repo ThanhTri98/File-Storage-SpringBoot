@@ -8,6 +8,7 @@ import com.api.filestorage.dto.FileMoveDTO.Data;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.VideoFileEntity;
 import com.api.filestorage.repository.VideoRepository;
+import com.api.filestorage.services.ClazzData.DataShared;
 import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,10 @@ public class VideoService implements BaseService<VideoFileEntity> {
     @Override
 	public List<Data> copyFile(FileMoveDTO filesModel) {
 		return BaseService.super.copyFile(filesModel, videoRepository);
+	}
+
+    @Override
+	public List<DataShared> findAllFileInParent(String creator, String parent) {
+		return BaseService.super.findAllFileInParent( creator, parent, "videos", videoRepository);
 	}
 }

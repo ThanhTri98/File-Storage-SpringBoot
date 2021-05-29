@@ -1,16 +1,17 @@
 package com.api.filestorage.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
-import com.api.filestorage.dto.UserDTO;
 import com.api.filestorage.dto.auth.DataRequestOTP;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.UserEntity;
 import com.api.filestorage.security.payload.request.LoginRequest;
 import com.api.filestorage.services.UserService;
+import com.api.filestorage.services.ClazzData.DataShared;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -94,5 +95,20 @@ public class UserController {
         return userService.getTrash(username);
     }
 
+    @GetMapping("/user/shared/all/{username}")
+    public List<DataShared> getShared(@PathVariable String username) {
+        return userService.getShared(username);
+    }
 
+    @GetMapping("/user/shared/{text}")
+    public String findByUserNameOrEmail(@PathVariable String text) {
+        return userService.findByUserNameOrEmail(text);
+    }
+
+    @GetMapping(value = { "/user/search/{creator}/{query}", "/user/search/{creator}" })
+    public List<FilesEntity> getListSearch(@PathVariable String creator, @PathVariable String query) {
+        if (query == null)
+            return new ArrayList<>();
+        return userService.getListSearch(creator, query);
+    }
 }

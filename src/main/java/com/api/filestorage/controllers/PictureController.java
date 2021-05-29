@@ -9,6 +9,7 @@ import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.PictureFileEntity;
 import com.api.filestorage.services.PictureService;
+import com.api.filestorage.services.ClazzData.DataShared;
 import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,10 @@ public class PictureController implements BaseController<PictureFileEntity> {
 	@Override
 	public ResponseEntity<?> copyFile(FileMoveDTO filesModel) {
 		return BaseController.super.copyFile(filesModel, pictureService);
+	}
+
+	@Override
+	public List<DataShared> findAllFileInParent(String creator, String parent) {
+		return BaseController.super.findAllFileInParent(creator, parent, pictureService);
 	}
 }

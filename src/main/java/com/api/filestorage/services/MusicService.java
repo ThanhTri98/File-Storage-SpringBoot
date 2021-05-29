@@ -8,6 +8,7 @@ import com.api.filestorage.dto.FileMoveDTO.Data;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.MusicFileEntity;
 import com.api.filestorage.repository.MusicRepository;
+import com.api.filestorage.services.ClazzData.DataShared;
 import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,11 @@ public class MusicService implements BaseService<MusicFileEntity> {
 	@Override
 	public List<Data> copyFile(FileMoveDTO filesModel) {
 		return BaseService.super.copyFile(filesModel, musicRepository);
+	}
+
+	@Override
+	public List<DataShared> findAllFileInParent(String creator, String parent) {
+		return BaseService.super.findAllFileInParent(creator, parent, "musics", musicRepository);
 	}
 
 }

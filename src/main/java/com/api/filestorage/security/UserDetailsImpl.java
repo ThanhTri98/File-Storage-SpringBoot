@@ -18,7 +18,6 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private String full_name;
     private String email;
-    // private int is_active;
     private Collection<? extends GrantedAuthority> authorities;
     private String acc_pkg_name;
     private long acc_pkg_size;
