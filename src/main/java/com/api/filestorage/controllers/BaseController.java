@@ -69,26 +69,36 @@ public interface BaseController<T extends FilesEntity> {
     }
 
     @PutMapping("/move") // id, [name, extension], new_parent, creator ->>>> move
-    ResponseEntity<?> editFilesParent(@RequestBody FileMoveDTO filesModel);
+    ResponseEntity<?> moveFile(@RequestBody FileMoveDTO filesModel);
 
-    default ResponseEntity<?> editFilesParent(FileMoveDTO filesModel, @NonNull BaseService<T> services) {
-        if (filesModel.getType_copy_move() == 0) {
-            List<FileMoveDTO.Data> dataDuplicate = services.editFilesParent(filesModel);
-            // dataDuplicate.forEach(d -> System.out.printf("%s, %s", d.getExtension(),
-            // d.getName()));
-            if (dataDuplicate.size() != 0) {
-                Map<String, Object> responseData = new HashMap<>();
-                responseData.put("msg", "Thư mục đích có " + dataDuplicate.size() + " mục trùng tên");
-                filesModel.setDatas(dataDuplicate);
-                responseData.put("data", filesModel);
-                return new ResponseEntity<Map<String, Object>>(responseData, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else { // Replace: Thay đổi file bị trùng bằng file trùng đồng thời xóa file bị trùng
-            services.editFilesParent(filesModel);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-
+    default ResponseEntity<?> moveFile(FileMoveDTO filesModel, @NonNull BaseService<T> services) {
+        if (services.moveFile(filesModel))
+            return ResponseEntity.ok().build();
+        return ResponseEntity.badRequest().build();
     }
+
+    // default ResponseEntity<?> editFilesParent(FileMoveDTO filesModel, @NonNull
+    // BaseService<T> services) {
+    // if (filesModel.getType_copy_move() == 0) {
+    // List<FileMoveDTO.Data> dataDuplicate = services.editFilesParent(filesModel);
+    // // dataDuplicate.forEach(d -> System.out.printf("%s, %s", d.getExtension(),
+    // // d.getName()));
+    // if (dataDuplicate.size() != 0) {
+    // Map<String, Object> responseData = new HashMap<>();
+    // responseData.put("msg", "Thư mục đích có " + dataDuplicate.size() + " mục
+    // trùng tên");
+    // filesModel.setDatas(dataDuplicate);
+    // responseData.put("data", filesModel);
+    // return new ResponseEntity<Map<String, Object>>(responseData,
+    // HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    // } else { // Replace: Thay đổi file bị trùng bằng file trùng đồng thời xóa
+    // file bị trùng
+    // services.editFilesParent(filesModel);
+    // }
+    // return new ResponseEntity<>(HttpStatus.OK);
+
+    // }
 
     // share, copy, download, upload, sort, paging, search, filter
 

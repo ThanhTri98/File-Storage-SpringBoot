@@ -72,8 +72,8 @@ public class MusicController implements BaseController<MusicFileEntity> {
 	}
 
 	@Override
-	public ResponseEntity<?> editFilesParent(FileMoveDTO filesModels) {
-		return BaseController.super.editFilesParent(filesModels, musicService);
+	public ResponseEntity<?> moveFile(FileMoveDTO filesModels) {
+		return BaseController.super.moveFile(filesModels, musicService);
 	}
 
 	@Override

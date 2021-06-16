@@ -3,6 +3,7 @@ package com.api.filestorage.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,6 +66,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public boolean checkPassword(Map<String, String> pwd) {
+        UserEntity userEntity = userRepository.findByUsername(pwd.get("username"));
+        String password = pwd.get("password");
+        return passwordEncoder.matches(password, userEntity.getPassword());
+    }
+
     public UserDTO findByUsername(String userName) {
         UserEntity userEntity = userRepository.findByUsername(userName);
         if (userEntity == null)
@@ -120,8 +127,24 @@ public class UserService {
             OtpEntity entity = new OtpEntity();
             entity.setCode(randomCode);
             entity.setUuid(uuid);
+            entity.setEmail(email);
             entity.setExpireTime(LocalDateTime.now().plusMinutes(3));
             otpRepository.save(entity);
+        }
+    }
+
+    public boolean otpIsValid(Map<String, String> data) {
+        return otpRepository.validOtpEmail(data.get("email"), Integer.parseInt(data.get("otp"))) != null;
+    }
+
+    public boolean updatePwd(Map<String, String> data) {
+        UserEntity userEntity = userRepository.findByEmail(data.get("email"));
+        userEntity.setPassword(passwordEncoder.encode(data.get("pwd")));
+        try {
+            userRepository.save(userEntity);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -129,7 +152,6 @@ public class UserService {
         // Get tat ca cac size trong music, video, picture
         Long size_music = musicRepository.getTotalSize(userName, BaseService.FOLDER_EXT);
         size_music = size_music != null ? size_music : 0;
-        // System.out.println(size_music+"size music");
         Long size_picture = pictureRepository.getTotalSize(userName, BaseService.FOLDER_EXT);
         size_picture = size_picture != null ? size_picture : 0;
         Long size_video = videoRepository.getTotalSize(userName, BaseService.FOLDER_EXT);
@@ -212,7 +234,7 @@ public class UserService {
 
     public List<FilesEntity> getListSearch(String creator, String query) {
         List<FilesEntity> rs = new ArrayList<>();
-        String transQue = "%"+query+"%";
+        String transQue = "%" + query + "%";
         List<MusicFileEntity> musics = musicRepository.findSearch(creator, transQue);
         List<VideoFileEntity> videos = videoRepository.findSearch(creator, transQue);
         List<PictureFileEntity> pictures = pictureRepository.findSearch(creator, transQue);

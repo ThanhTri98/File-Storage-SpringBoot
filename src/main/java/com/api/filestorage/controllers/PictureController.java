@@ -45,8 +45,8 @@ public class PictureController implements BaseController<PictureFileEntity> {
 	}
 
 	@Override
-	public ResponseEntity<?> editFilesParent(FileMoveDTO filesModels) {
-		return BaseController.super.editFilesParent(filesModels, pictureService);
+	public ResponseEntity<?> moveFile(FileMoveDTO filesModels) {
+		return BaseController.super.moveFile(filesModels, pictureService);
 	}
 
 	@Override

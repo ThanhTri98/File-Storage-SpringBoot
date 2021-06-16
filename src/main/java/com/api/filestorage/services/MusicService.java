@@ -55,8 +55,8 @@ public class MusicService implements BaseService<MusicFileEntity> {
 	}
 
 	@Override
-	public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {
-		return BaseService.super.editFilesParent(filesModel, musicRepository);
+	public boolean moveFile(FileMoveDTO filesModel) {
+		return BaseService.super.moveFile(filesModel, musicRepository);
 	}
 
 	@Override

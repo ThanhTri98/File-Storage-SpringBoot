@@ -33,13 +33,12 @@ public interface BaseService<T extends FilesEntity> {
 
     List<DataShared> findAllFileInParent(String creator, String parent);
 
-    default List<DataShared> findAllFileInParent(String creator, String parent, String kind,
-            BaseRepository<T> repos) {
+    default List<DataShared> findAllFileInParent(String creator, String parent, String kind, BaseRepository<T> repos) {
         if (parent == null)
             parent = "";
         return repos.findByStateAndCreatorAndParent(DEFAULT_STATE, creator, parent).stream().map(f -> {
             return new DataShared(f.getId(), f.getFile_sk(), f.getName(), f.getSize(), f.getExtension(), f.getParent(),
-            creator, kind);
+                    creator, kind);
         }).collect(Collectors.toList());
     }
 
@@ -110,34 +109,20 @@ public interface BaseService<T extends FilesEntity> {
     }
 
     // move
-    List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel);
+    boolean moveFile(FileMoveDTO filesModel);
 
-    default List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel, BaseRepository<T> repos) {
-        List<FileMoveDTO.Data> dataDuplicate = new ArrayList<>();
-        String creator = filesModel.getCreator();
+    default boolean moveFile(FileMoveDTO filesModel, BaseRepository<T> repos) {
         String new_parent = filesModel.getNew_parent();
-        if (filesModel.getType_copy_move() == 0) {
+        try {
             filesModel.getDatas().forEach(data -> {
-                if (repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator, new_parent,
-                        data.getExtension(), data.getName()) != null) // Duplicate
-                    dataDuplicate.add(data);
-                else
-                    repos.editFilesParent(data.getId(), new_parent);
-
+                repos.editFilesParent(data.getId(), new_parent);
             });
-        } else { // Replace: Thay đổi file bị trùng bằng file trùng đồng thời xóa file bị trùng
-            filesModel.getDatas().forEach(data -> {
-                // Nếu là thư mục
-                // ++ Vào độ sâu 1 tiếp tục kiểm tra các file và thư mục con
-
-                // Nếu là file
-                FilesEntity f = repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator,
-                        new_parent, data.getExtension(), data.getName());
-                repos.editFilesParent(data.getId(), new_parent); // Thay đổi file bị trùng bằng file trùng
-                repos.delete(f); // xóa file bị trùng
-            });
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        return dataDuplicate;
+
     }
 
     // Copy
@@ -163,8 +148,6 @@ public interface BaseService<T extends FilesEntity> {
             });
             return dataDuplicate;
         } else if (filesModel.getType_copy_move() == 1) { // ghi đè
-            System.out.println("ghi đè");
-            //
             filesModel.getDatas().forEach(data -> {
                 FilesEntity filesEntity = repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE,
                         creator, new_parent, data.getExtension(), data.getName());
@@ -176,7 +159,6 @@ public interface BaseService<T extends FilesEntity> {
                 repos.insert(files);
             });
         } else { // Tạo bản mới tên tăng theo stt
-            System.out.println("tạo bản mới tên tăng theo stt");
             filesModel.getDatas().forEach(data -> {
                 int count = repos.countFileDuplicate(1, creator, new_parent, data.getExtension(), "%" + data.getName());
                 FilesEntity files = HelperClass.transferBaseToInstance(repos.findById(data.getId()));

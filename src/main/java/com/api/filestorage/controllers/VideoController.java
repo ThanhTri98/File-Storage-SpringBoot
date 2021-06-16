@@ -46,8 +46,8 @@ public class VideoController implements BaseController<VideoFileEntity> {
 	}
 
 	@Override
-	public ResponseEntity<?> editFilesParent(FileMoveDTO filesModels) {
-		return BaseController.super.editFilesParent(filesModels, videoService);
+	public ResponseEntity<?> moveFile(FileMoveDTO filesModels) {
+		return BaseController.super.moveFile(filesModels, videoService);
 	}
 
 	@Override

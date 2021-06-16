@@ -15,11 +15,11 @@ public class MailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    private static Random random = new Random();
+    private static final Random RANDOM = new Random();
 
     int sendEmail(String email) {
         try {
-            int randomCode = random.nextInt(999999 - 100000) + 100000;
+            int randomCode = RANDOM.nextInt(999999 - 100000) + 100000;
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
             helper.setTo(email);

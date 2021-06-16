@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import com.api.filestorage.dto.auth.DataRequestOTP;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.entities.UserEntity;
+import com.api.filestorage.repository.OtpRepository;
 import com.api.filestorage.security.payload.request.LoginRequest;
 import com.api.filestorage.services.UserService;
 import com.api.filestorage.services.ClazzData.DataShared;
@@ -16,9 +17,11 @@ import com.api.filestorage.services.ClazzData.DataShared;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -82,6 +85,37 @@ public class UserController {
     @GetMapping("/user/{userName}")
     public long getUsedMemory(@PathVariable String userName) {
         return userService.getUsedMemory(userName);
+    }
+
+    @PostMapping("/user/checkPwd")
+    public ResponseEntity<?> checkPassword(@RequestBody Map<String, String> pwd) {
+        if (userService.checkPassword(pwd)) {
+            return ResponseEntity.ok().body(null);
+        }
+        return ResponseEntity.ok().body("Mật khẩu hiện tại không đúng");
+    }
+
+    // @PutMapping("/user")// cap nhat thong tin
+    // public void updateInfor()
+    // @PostMapping("/mail")
+    // public void sendMail(@RequestBody String email) {
+    //     // System.out.println(email);
+    //     userService.sendEmail(email, null);
+    // }
+
+    @PostMapping("/otp")
+    public ResponseEntity<?> checkOTP(@RequestBody Map<String, String> data) {
+        if (userService.otpIsValid(data)) {
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok("OTP không hợp lệ!");
+    }
+
+    @PutMapping("/pwd")
+    public ResponseEntity<?> updatePwd(@RequestBody Map<String, String> data) {
+        if (!userService.updatePwd(data))
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/user/total/{price}")

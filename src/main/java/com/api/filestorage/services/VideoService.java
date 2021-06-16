@@ -42,9 +42,9 @@ public class VideoService implements BaseService<VideoFileEntity> {
 
 
     @Override
-    public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {
-        return BaseService.super.editFilesParent(filesModel, videoRepository);
-    }
+	public boolean moveFile(FileMoveDTO filesModel) {
+		return BaseService.super.moveFile(filesModel, videoRepository);
+	}
 
     @Override
     public boolean uploadFile(MultipartFile file, String fileInfor) {

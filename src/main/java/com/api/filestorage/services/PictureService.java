@@ -41,9 +41,9 @@ public class PictureService implements BaseService<PictureFileEntity> {
 	}
 
     @Override
-    public List<FileMoveDTO.Data> editFilesParent(FileMoveDTO filesModel) {
-        return BaseService.super.editFilesParent(filesModel, pictureRepository);
-    }
+	public boolean moveFile(FileMoveDTO filesModel) {
+		return BaseService.super.moveFile(filesModel, pictureRepository);
+	}
 
     @Override
     public boolean uploadFile(MultipartFile file, String fileInfor) {
