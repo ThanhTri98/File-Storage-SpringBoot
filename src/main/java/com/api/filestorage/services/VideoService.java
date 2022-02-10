@@ -21,8 +21,8 @@ public class VideoService implements BaseService<VideoFileEntity> {
     private VideoRepository videoRepository;
 
     @Override
-    public List<? extends FilesEntity> findAllFileInParent(int state,String creator, String parent) {
-        return BaseService.super.findAllFileInParent(state,creator, parent, videoRepository);
+    public List<? extends FilesEntity> findAllFileInParent(int state, String creator, String parent) {
+        return BaseService.super.findAllFileInParent(state, creator, parent, videoRepository);
     }
 
     @Override
@@ -37,14 +37,13 @@ public class VideoService implements BaseService<VideoFileEntity> {
 
     @Override
     public void editFilesState(TrashOrUnTrash trash) {
-		BaseService.super.editFilesState(trash, videoRepository);
-	}
-
+        BaseService.super.editFilesState(trash, videoRepository);
+    }
 
     @Override
-	public boolean moveFile(FileMoveDTO filesModel) {
-		return BaseService.super.moveFile(filesModel, videoRepository);
-	}
+    public boolean moveFile(FileMoveDTO filesModel) {
+        return BaseService.super.moveFile(filesModel, videoRepository);
+    }
 
     @Override
     public boolean uploadFile(MultipartFile file, String fileInfor) {
@@ -56,14 +55,19 @@ public class VideoService implements BaseService<VideoFileEntity> {
     public List<? extends FilesEntity> findAllFolderInParent(String creator, String parent) {
         return BaseService.super.findAllFolderInParent(creator, parent, videoRepository);
     }
-    
-    @Override
-	public List<Data> copyFile(FileMoveDTO filesModel) {
-		return BaseService.super.copyFile(filesModel, videoRepository);
-	}
 
     @Override
-	public List<DataShared> findAllFileInParent(String creator, String parent) {
-		return BaseService.super.findAllFileInParent( creator, parent, "videos", videoRepository);
-	}
+    public List<Data> copyFile(FileMoveDTO filesModel) {
+        return BaseService.super.copyFile(filesModel, videoRepository);
+    }
+
+    @Override
+    public List<DataShared> findAllFileInParent(String creator, String parent) {
+        return BaseService.super.findAllFileInParent(creator, parent, "videos", videoRepository);
+    }
+
+    @Override
+    public void delete(TrashOrUnTrash trash) {
+        BaseService.super.delete(trash, videoRepository);
+    }
 }

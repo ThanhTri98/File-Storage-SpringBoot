@@ -21,9 +21,10 @@ public class UserDetailsImpl implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
     private String acc_pkg_name;
     private long acc_pkg_size;
+    private int isActive;
 
     public UserDetailsImpl(String username, String password, String email, String full_name, String acc_pkg_name,
-            long acc_pkg_size, Collection<? extends GrantedAuthority> authorities) {
+            long acc_pkg_size,int isActive, Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -31,6 +32,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
         this.acc_pkg_name = acc_pkg_name;
         this.acc_pkg_size = acc_pkg_size;
+        this.isActive = isActive;
     }
 
     public static UserDetailsImpl build(UserDTO user) {
@@ -38,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
                 .map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 
         return new UserDetailsImpl(user.getUsername(), user.getPassword(), user.getEmail(), user.getFull_name(),
-                user.getAcc_pkg_name(), user.getAcc_pkg_size(), authorities);
+                user.getAcc_pkg_name(), user.getAcc_pkg_size(),user.getIs_active(), authorities);
     }
 
     public void setUsername(String username) {
@@ -109,7 +111,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive==1;
     }
 
     public String getFull_name() {

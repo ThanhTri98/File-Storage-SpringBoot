@@ -80,4 +80,9 @@ public class MusicService implements BaseService<MusicFileEntity> {
 		return BaseService.super.findAllFileInParent(creator, parent, "musics", musicRepository);
 	}
 
+	@Override
+	public void delete(TrashOrUnTrash trash) {
+		BaseService.super.delete(trash, musicRepository);
+	}
+
 }

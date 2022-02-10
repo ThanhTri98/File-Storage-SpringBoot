@@ -95,4 +95,9 @@ public class MusicController implements BaseController<MusicFileEntity> {
 	public List<DataShared> findAllFileInParent( String creator, String parent) {
 		return BaseController.super.findAllFileInParent( creator, parent, musicService);
 	}
+
+	@Override
+	public void delete(TrashOrUnTrash trash) {
+		BaseController.super.delete(trash, musicService);
+	}
 }

@@ -43,12 +43,12 @@ public interface MusicRepository extends JpaRepository<MusicFileEntity, Integer>
     void editFilesState(String nameOfParent, int state, String creator);
 
     @Modifying
-    @Query(value = "UPDATE musicfile MF SET MF.PARENT = ?2 WHERE MF.ID =?1", nativeQuery = true)
+    @Query(value = "UPDATE musicfile MF SET MF.PARENT = ?2, MF.MODIFY_DATE=NOW() WHERE MF.ID =?1", nativeQuery = true)
     void editFilesParent(int id, String parent);
 
     @Modifying
-    default void delete(@NonNull FilesEntity files) {
-        this.deleteById(files.getId());
+    default void delete(@NonNull int id) {
+        this.deleteById(id);
     }
 
     // 20210519

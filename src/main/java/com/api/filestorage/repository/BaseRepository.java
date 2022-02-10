@@ -36,9 +36,9 @@ public interface BaseRepository<T extends FilesEntity> {
 
         // <----------------MOVE
         void editFilesParent(int id, String parent); // tmp - files
-
         // ---------------->MOVE
+
         void insert(@NonNull FilesEntity files); // tmp
 
-        void delete(@NonNull FilesEntity files); // tmp
+        void delete(@NonNull int id); // tmp
 }

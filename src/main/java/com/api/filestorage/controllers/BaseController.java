@@ -68,6 +68,13 @@ public interface BaseController<T extends FilesEntity> {
         services.editFilesState(trash);
     }
 
+    @PostMapping("/delete")
+    void delete(@RequestBody TrashOrUnTrash trash);
+
+    default void delete(TrashOrUnTrash trash, @NonNull BaseService<T> services) {
+        services.delete(trash);
+    }
+
     @PutMapping("/move") // id, [name, extension], new_parent, creator ->>>> move
     ResponseEntity<?> moveFile(@RequestBody FileMoveDTO filesModel);
 

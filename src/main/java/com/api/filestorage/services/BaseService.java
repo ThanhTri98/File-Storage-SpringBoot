@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.api.filestorage.dto.FileMoveDTO;
 import com.api.filestorage.entities.FilesEntity;
 import com.api.filestorage.repository.BaseRepository;
+import com.api.filestorage.repository.MusicRepository;
 import com.api.filestorage.services.ClazzData.DataShared;
 import com.api.filestorage.services.ClazzData.TrashOrUnTrash;
 
@@ -67,7 +68,6 @@ public interface BaseService<T extends FilesEntity> {
     void editFilesState(TrashOrUnTrash trash);
 
     default void editFilesState(TrashOrUnTrash trash, BaseRepository<T> repos) {
-        // System.out.println(trash.getCreator());
         trash.getDatas().forEach(data -> {
             trashProcess(data, trash.getCreator(), trash.getState(), repos);
         });
@@ -89,6 +89,37 @@ public interface BaseService<T extends FilesEntity> {
                     repos.editFilesState(file.getId(), state);
                 }
             });
+        }
+    }
+
+    // Delete
+    // move to trash or else
+    void delete(TrashOrUnTrash trash);
+
+    default void delete(TrashOrUnTrash trash, BaseRepository<T> repos) {
+        trash.getDatas().forEach(data -> {
+            deleteProcess(data, trash.getCreator(), repos);
+        });
+    }
+
+    default void deleteProcess(TrashOrUnTrash.Data data, String creator, BaseRepository<T> repos) {
+        if (data.getExtension().equals(FOLDER_EXT)) {
+            repos.delete(data.getId());
+            List<? extends FilesEntity> files = repos.findByStateAndCreatorAndParent(DEFAULT_STATE, creator,
+                    data.getName());
+            files.forEach(file -> {
+                if (file.getExtension().equals(FOLDER_EXT)) {
+                    TrashOrUnTrash.Data data1 = new TrashOrUnTrash.Data();
+                    data1.setId(file.getId());
+                    data1.setName(file.getName());
+                    data1.setExtension(file.getExtension());
+                    deleteProcess(data1, creator, repos);
+                } else {
+                    repos.delete(file.getId());
+                }
+            });
+        } else {
+            repos.delete(data.getId());
         }
     }
 
@@ -135,7 +166,6 @@ public interface BaseService<T extends FilesEntity> {
         if (filesModel.getType_copy_move() == 0) {
             List<FileMoveDTO.Data> dataDuplicate = new ArrayList<>();
             filesModel.getDatas().forEach(data -> {
-                // System.out.println(data.toString());
                 if (repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE, creator, new_parent,
                         data.getExtension(), data.getName()) != null) // Duplicate
                     dataDuplicate.add(data);
@@ -143,6 +173,7 @@ public interface BaseService<T extends FilesEntity> {
                     // Insert row moi y chan row hien tai chi khac moi ID
                     FilesEntity files = HelperClass.transferBaseToInstance(repos.findById(data.getId()));
                     files.setParent(new_parent);
+                    files.setModifyDate(LocalDateTime.now());
                     repos.insert(files);
                 }
             });
@@ -152,10 +183,11 @@ public interface BaseService<T extends FilesEntity> {
                 FilesEntity filesEntity = repos.findByStateAndCreatorAndParentAndExtensionAndName(DEFAULT_STATE,
                         creator, new_parent, data.getExtension(), data.getName());
                 // Delete file ở thư mục đích
-                repos.delete(filesEntity);
+                repos.delete(filesEntity.getId());
                 // Sao chép thằng hiện tại qua bển
                 FilesEntity files = HelperClass.transferBaseToInstance(repos.findById(data.getId()));
                 files.setParent(new_parent);
+                files.setModifyDate(LocalDateTime.now());
                 repos.insert(files);
             });
         } else { // Tạo bản mới tên tăng theo stt
@@ -164,6 +196,7 @@ public interface BaseService<T extends FilesEntity> {
                 FilesEntity files = HelperClass.transferBaseToInstance(repos.findById(data.getId()));
                 files.setName("Copy(" + count + ") " + data.getName());
                 files.setParent(new_parent);
+                files.setModifyDate(LocalDateTime.now());
                 repos.insert(files);
             });
         }
@@ -179,7 +212,9 @@ public interface BaseService<T extends FilesEntity> {
             String[] parent_creator = HelperClass.getParentAndCreatorFromURI(fileInfor);
             if (parent_creator == null)
                 return false;
-
+            // Check size
+            // Long totalSize = repos.getTotalSize(parent_creator[1], FOLDER_EXT);
+            // System.out.println(totalSize + " - "+file.getOriginalFilename());
             // UUID save to DB
             String file_sk = UUID.randomUUID().toString();
 

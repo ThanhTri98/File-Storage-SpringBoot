@@ -156,8 +156,6 @@ public class UserService {
         size_picture = size_picture != null ? size_picture : 0;
         Long size_video = videoRepository.getTotalSize(userName, BaseService.FOLDER_EXT);
         size_video = size_video != null ? size_video : 0;
-        ;
-        // long useable = total_size - (size_music + size_picture + size_video)
         return size_music + size_picture + size_video;
     }
 

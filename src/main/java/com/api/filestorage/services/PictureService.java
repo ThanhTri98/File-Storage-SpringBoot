@@ -64,5 +64,9 @@ public class PictureService implements BaseService<PictureFileEntity> {
 	public List<DataShared> findAllFileInParent(String creator, String parent) {
 		return BaseService.super.findAllFileInParent( creator, parent, "pictures", pictureRepository);
 	}
+    @Override
+	public void delete(TrashOrUnTrash trash) {
+		BaseService.super.delete(trash,pictureRepository);
+	}
 
 }

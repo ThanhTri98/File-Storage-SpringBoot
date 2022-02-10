@@ -66,4 +66,9 @@ public class PictureController implements BaseController<PictureFileEntity> {
 	public List<DataShared> findAllFileInParent(String creator, String parent) {
 		return BaseController.super.findAllFileInParent(creator, parent, pictureService);
 	}
+	
+	@Override
+	public void delete(TrashOrUnTrash trash) {
+		BaseController.super.delete(trash, pictureService);
+	}
 }

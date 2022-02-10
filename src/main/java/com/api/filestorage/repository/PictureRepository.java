@@ -43,12 +43,12 @@ public interface PictureRepository
     void editFilesState(String nameOfParent, int state, String creator);
 
     @Modifying
-    @Query(value = "UPDATE picturefile PF SET PF.PARENT = ?2 WHERE PF.ID =?1", nativeQuery = true)
+    @Query(value = "UPDATE picturefile PF SET PF.PARENT = ?2, PF.MODIFY_DATE=NOW() WHERE PF.ID =?1", nativeQuery = true)
     void editFilesParent(int id, String parent);
 
     @Modifying
-    default void delete(@NonNull FilesEntity files) {
-        this.deleteById(files.getId());
+    default void delete(@NonNull int id) {
+        this.deleteById(id);
     }
 
     // 20210519

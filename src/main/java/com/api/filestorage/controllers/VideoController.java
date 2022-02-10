@@ -66,8 +66,13 @@ public class VideoController implements BaseController<VideoFileEntity> {
 	}
 
 	@Override
-	public List<DataShared> findAllFileInParent( String creator, String parent) {
+	public List<DataShared> findAllFileInParent(String creator, String parent) {
 		return BaseController.super.findAllFileInParent(creator, parent, videoService);
+	}
+
+	@Override
+	public void delete(TrashOrUnTrash trash) {
+		BaseController.super.delete(trash, videoService);
 	}
 
 }
